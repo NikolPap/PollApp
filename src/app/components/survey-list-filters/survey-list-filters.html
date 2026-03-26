@@ -1,0 +1,120 @@
+<!-- Surveys Section -->
+  <section class="surveys-section">
+    <h2 class="section-title bubbly-text">Your surveys</h2>
+
+    <div class="ending-soon">
+      <h3 class="ending-title">Ending soon surveys</h3>
+      <div class="cards-container">
+        
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="card-content">
+            <span class="category">Team activities</span>
+            <h4 class="card-title">Let's Plan the Next Team Event Together</h4>
+          </div>
+          <span class="badge">Ends in 1 Day</span>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="card-content">
+            <span class="category">Health & Wellness</span>
+            <h4 class="card-title">Fit & wellness survey!</h4>
+          </div>
+          <span class="badge">Ends in 2 Days</span>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="card-content">
+            <span class="category">Gaming & Entertainment</span>
+            <h4 class="card-title">Gaming habits and favorite games!</h4>
+          </div>
+          <span class="badge">Ends in 3 Days</span>
+        </div>
+      </div>
+    </div>
+   <div class="filter-tabs">
+  
+  <div class="tabs-group">
+    <button class="tab active">Active survey</button>
+    <button class="tab">Past survey</button>
+  </div>
+<div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
+      <button class="dropdown-toggle" (click)="toggleDropdown()">
+    <div class="toggle-texts">
+      <span class="main-text">Sort by categories</span>
+      @if (selectedCategory()) {
+        <span class="selected-text">{{ selectedCategory() }}</span>
+      }
+    </div>
+    
+    <span class="dropdown-arrow"></span>
+  </button>
+  
+  <ul class="dropdown-menu">
+    @for (category of categories; track category) {
+      <li 
+        class="dropdown-item" 
+        [class.selected]="selectedCategory() === category"
+        (click)="selectCategory(category)">
+        {{ category }}
+      </li>
+    }
+  </ul>
+  
+</div>
+
+</div>
+
+    <!-- Bottom Survey Grid -->
+    <div class="surveys-list">
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Team activities</span>
+          <h5 class="list-title pale-text">Let's Plan the Next Team Event Together</h5>
+        </div>
+        <span class="badge">Ends in 1 Day</span>
+      </div>
+
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Gaming</span>
+          <h5 class="list-title pale-text">Gaming habits and favorite games!</h5>
+        </div>
+        <span class="badge">Ends in 3 Days</span>
+      </div>
+
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Gaming</span>
+          <h5 class="list-title pale-text">Gaming habits and favorite games!</h5>
+        </div>
+        <span class="badge">Ends in 3 Days</span>
+      </div>
+
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Healthy Lifestyle</span>
+          <h5 class="list-title pale-text">Healthier future: Fit & wellness survey!</h5>
+        </div>
+        <span class="badge">Ends in 2 Days</span>
+      </div>
+
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Healthy Lifestyle</span>
+          <h5 class="list-title pale-text">Healthier future: Fit & wellness survey!</h5>
+        </div>
+        <span class="badge">Ends in 2 Days</span>
+      </div>
+
+      <div class="list-item">
+        <div class="list-info">
+          <span class="category-small pale-text">Team activities</span>
+          <h5 class="list-title pale-text">Let's Plan the Next Team Event Together</h5>
+        </div>
+        <span class="badge">Ends in 1 Day</span>
+      </div>
+    </div>
+  </section>
