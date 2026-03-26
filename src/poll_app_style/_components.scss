@@ -1,7 +1,7 @@
 :root {
-  --primary-color:#FFB770; 
-  --bg-orange: #ffe9d4;    
-  --badge-bg: #FFCFA1;
+  --primary-color: #ffb770;
+  --bg-orange: #ffe9d4;
+  --badge-bg: #ffcfa1;
   --bg-white: #ffffff;
 }
 
@@ -11,8 +11,8 @@ body {
 }
 
 header {
-    max-width: 1440px;
-    margin: 0 auto;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 .container {
@@ -35,14 +35,13 @@ header {
   justify-content: space-between;
   margin-top: 50px;
   margin-bottom: 80px;
-  
+
   p {
     color: white;
     font-size: 24px;
     font-weight: 600;
   }
 }
-
 
 .hero-content {
   flex: 1;
@@ -90,7 +89,7 @@ header {
 .ending-title {
   font-size: 2.2rem;
   font-weight: 500;
-  color: #e5e5e5; 
+  color: #e5e5e5;
   margin-bottom: 30px;
 }
 
@@ -103,8 +102,8 @@ header {
 
 .card {
   max-width: 320px;
-  background-color: #f7f6fc; 
-  border-radius: 0 100px 0 0; 
+  background-color: #f7f6fc;
+  border-radius: 0 100px 0 0;
   padding: 40px 30px;
   min-height: 250px;
   display: flex;
@@ -130,34 +129,13 @@ header {
 }
 
 .badge {
-    background-color: var(--badge-bg);
-    color: #35273A;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 3px 14px;
-    border-radius: 0 80px 0 0;
-    align-self: flex-end;
-}
-
-.filter-tabs {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 40px;
-}
-
-.tab {
-  border: none;
-  padding: 3px 10px;
-  border-radius: 24px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  background-color: #ffe8d1;
-  color: #35273A;
-
-  &.active {
-    background-color: var(--primary-color);
-  }
+  background-color: var(--badge-bg);
+  color: #35273a;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 3px 14px;
+  border-radius: 0 80px 0 0;
+  align-self: flex-end;
 }
 
 .surveys-list {
@@ -167,7 +145,7 @@ header {
 }
 
 .list-item {
-  background-color: #D9D9D914; 
+  background-color: #d9d9d914;
   border-radius: 0 50px 0 0;
   padding: 15px 30px;
   display: flex;
@@ -177,7 +155,7 @@ header {
 }
 
 .pale-text {
-  color: #ffe4cc; 
+  color: #ffe4cc;
 }
 
 .category-small {
@@ -193,4 +171,162 @@ header {
   margin: 0;
   color: white;
   padding-bottom: 15px;
+}
+
+.filter-tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  max-width: 1370px;
+}
+
+.tabs-group {
+  display: flex;
+  gap: 15px;
+}
+
+.tab {
+  border: none;
+  padding: 3px 10px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background-color: #ffe8d1;
+  color: #35273a;
+
+  &.active {
+    background-color: var(--primary-color);
+  }
+}
+
+.sort-dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 16px; 
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  position: relative; 
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-color: #ffffff;
+  mask-image: url('/assets/images/arrow_drop_down.svg');
+  -webkit-mask-image: url('/assets/images/arrow_drop_down.svg');
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.sort-dropdown.open .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-toggle:hover,
+.sort-dropdown.open .dropdown-toggle {
+  background: #D9D9D91F;
+}
+
+.dropdown-toggle:hover .dropdown-arrow {
+  background-color: var(--primary-color);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 3px);
+  right: 0; 
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  list-style: none;
+  margin: 0;
+  min-width: 200px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.sort-dropdown.open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.toggle-texts {
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start;
+  text-align: left;
+  gap: 4px;
+}
+
+.main-text {
+  color: #ffffff;
+}
+
+.selected-text {
+  position: absolute;
+  top: 100%;
+  left: 16px; 
+  margin-top: 6px; 
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sort-dropdown.open .selected-text {
+  display: none;
+}
+
+.dropdown-item {
+  color: #35273a;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 6px 10px; 
+  margin-bottom: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-item:hover {
+  background-color: #f6f0ff;
+}
+
+.dropdown-item.selected {
+  color: var(--primary-color);
+}
+
+.dropdown-toggle.has-selection {
+  color: var(--primary-color);
 }
