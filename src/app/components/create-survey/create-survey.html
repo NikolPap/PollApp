@@ -6,7 +6,7 @@
       <span class="badge draft">Draft</span>
       <h1 class="bubbly-text title">Create new survey</h1>
     </div>
-    <button class="cancel-btn" routerLink="">Cancel &#x2715;</button>
+    <button class="cancel-btn" routerLink="">Cancel <img src="\assets\images\close.svg" alt="close button"></button>
   </div>
 
   <!-- Inner Form Container -->
@@ -37,7 +37,7 @@
             <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
       <button class="dropdown-toggle" (click)="toggleDropdown()">
     <div class="toggle-texts">
-      <span class="main-text">Sort by categories</span>
+      <span class="main-text">Choose category </span>
       @if (selectedCategory()) {
         <span class="selected-text">{{ selectedCategory() }}</span>
       }
@@ -113,13 +113,13 @@
           </div>
         </div>
 
-        <button class="add-text-btn">Add answer <span>&#x2295;</span></button>
+        <button class="add-text-btn"><img src="\assets\images\Secpondary button.svg" alt=""></button>
 
       </div>
 
       <!-- Right Column (Add Question Button) -->
       <div class="col-right action-col">
-        <button class="add-question-btn">Add next question <span>&#x2295;</span></button>
+        <button class="add-question-btn">Add next question <img src="\assets\images\add_circle.svg" alt="add circle image"></button>
       </div>
     </div>
 
