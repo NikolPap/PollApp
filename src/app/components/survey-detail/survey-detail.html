@@ -1,0 +1,84 @@
+<div class="survey-page-wrapper">
+  
+  <!-- Content Container (Flexbox) -->
+  <div class="survey-layout">
+    
+    <!-- Left Panel: Survey Form -->
+    <div class="survey-form-panel">
+      
+      <!-- Meta Information -->
+      <div class="meta-section">
+        <span class="badge">{{ surveyMeta.status }}</span>
+        
+        <div class="meta-details">
+          <span class="end-date">Ends on {{ surveyMeta.endDate }}</span>
+          <span class="category">Category: {{ surveyMeta.category }}</span>
+        </div>
+      </div>
+
+      <!-- Header & Description -->
+      <h1 class="survey-title bubbly-text">{{ surveyMeta.title }}</h1>
+      <p class="survey-description">{{ surveyMeta.description }}</p>
+
+      <!-- Questions Grid (2 Columns) -->
+      <div class="questions-grid">
+        @for (q of questions; track q.id) {
+          <div class="question-card">
+            <h3 class="question-title">{{ q.id }}. {{ q.title }}</h3>
+            @if (q.subtext) {
+              <p class="question-subtext">{{ q.subtext }}</p>
+            }
+            
+            <div class="options-group">
+              @for (opt of q.options; track opt.letter) {
+                <label class="custom-checkbox-label">
+                  <input type="checkbox" name="q{{ q.id }}_{{ opt.letter }}">
+                  <span class="checkmark"></span>
+                  <span class="option-text">
+                    <strong>{{ opt.letter }}.</strong> {{ opt.text }}
+                  </span>
+                </label>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Action Footer -->
+      <div class="form-footer">
+        <button class="complete-btn" routerLink="">Complete survey</button>
+      </div>
+    </div>
+
+    <!-- Right Panel: Live Results -->
+    <div class="survey-results-panel">
+      <h2 class="results-main-title">
+        Survey results <span class="bubbly-text live">LIVE</span>
+      </h2>
+
+      <div class="results-list">
+        @for (q of questions; track q.id) {
+          <div class="result-item">
+            <h3 class="result-question-title">{{ q.id }}. {{ q.title }}</h3>
+            
+            <div class="progress-bars-container">
+              @for (opt of q.options; track opt.letter) {
+                <div class="bar-row">
+                  <span class="bar-letter">{{ opt.letter }}</span>
+                  <div class="progress-track">
+                    <div 
+                      class="progress-fill" 
+                      [style.width.%]="opt.percentage">
+                    </div>
+                  </div>
+                  <span class="bar-percentage">{{ opt.percentage }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

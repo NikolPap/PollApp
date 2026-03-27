@@ -1,14 +1,14 @@
-import { Component,signal, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, signal, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-survey-list-filters',
+  selector: 'app-create-survey',
   imports: [RouterLink],
-  templateUrl: './survey-list-filters.html',
-  styleUrl: './survey-list-filters.scss',
+  templateUrl: './create-survey.html',
+  styleUrl: './create-survey.scss',
 })
-export class SurveyListFilters {
-   isDropdownOpen = signal(false);
+export class CreateSurvey {
+     isDropdownOpen = signal(false);
   selectedCategory = signal<string | null>(null);
   categories =[
     'Team Activities',

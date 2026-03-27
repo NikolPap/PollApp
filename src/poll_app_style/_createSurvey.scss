@@ -1,0 +1,280 @@
+
+$bg-outer: #35273a;
+$bg-inner: #44344a; 
+$btn-brown: #6b5350;
+$text-light: #ffffff;
+$primary-orange: #ffb770;
+$badge-bg: #ffdfbe;
+$publish-bg: #ffce9e;
+
+.create-survey-container {
+  background-color: $bg-outer;
+  border-radius: 20px 100px 20px 20px;
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: $text-light;
+}
+
+/* --- Header Section --- */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.title-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.badge.draft {
+  background-color: $badge-bg;
+  color: #35273a;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.bubbly-text.title {
+  margin: 0;
+  font-size: 3rem;
+  color: $primary-orange;
+}
+
+.cancel-btn {
+  background-color: $btn-brown;
+  color: $text-light;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.8; }
+}
+
+/* --- Form Card (Inner Container) --- */
+.form-card {
+  background-color: $bg-inner;
+  border-radius: 20px;
+  padding: 30px 40px;
+  margin-bottom: 30px;
+}
+
+.form-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+
+  &.question-section {
+    margin-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Ελαφρύ διαχωριστικό */
+    padding-top: 30px;
+  }
+}
+
+.col-left, .col-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.action-col {
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* --- Inputs & Groups --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+}
+
+.optional {
+  color: #a39ca6;
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.split-group {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+
+  &.align-top {
+    align-items: flex-start;
+  }
+}
+
+.custom-input {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+
+  &.short-input { max-width: 180px; }
+  &.textarea-field {
+    resize: none;
+    height: 100px;
+  }
+}
+
+
+/* --- Icons --- */
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trash-icon {
+  width: 20px;
+  height: 20px;
+
+  background-image: url('/assets/images/trash.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  opacity: 0.8;
+
+  &:hover {
+    opacity: 1;
+    background-image: url('/assets/images/trashHover.svg');
+  }
+}
+
+.label-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* --- Answers & Checkbox --- */
+.answers-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #d8d4db;
+
+  input { display: none; }
+
+  .checkmark {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .answer-letter {
+    font-weight: bold;
+    font-size: 1.1rem;
+    width: 20px;
+  }
+}
+
+/* --- Add Buttons --- */
+.add-text-btn {
+  background: none;
+  border: none;
+  color: $text-light;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  span { font-style: normal; text-decoration: none; }
+}
+
+.add-question-btn {
+  background-color: $btn-brown;
+  color: $text-light;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.8; }
+}
+
+/* --- Footer --- */
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.publish-btn {
+  background-color: $publish-bg;
+  color: #35273a;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 30px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover { transform: scale(1.05); }
+}

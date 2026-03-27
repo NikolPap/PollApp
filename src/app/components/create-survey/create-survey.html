@@ -1,0 +1,133 @@
+<div class="create-survey-container">
+  
+  <!-- Header of the Survey Creation -->
+  <div class="header-section">
+    <div class="title-area">
+      <span class="badge draft">Draft</span>
+      <h1 class="bubbly-text title">Create new survey</h1>
+    </div>
+    <button class="cancel-btn" routerLink="">Cancel &#x2715;</button>
+  </div>
+
+  <!-- Inner Form Container -->
+  <div class="form-card">
+    
+    <!-- Top Row (Name & Description) -->
+    <div class="form-row">
+      <!-- Left Column -->
+      <div class="col-left">
+        <div class="form-group">
+          <label>Survey name</label>
+          <div class="input-with-icon">
+            <input type="text" class="custom-input" />
+            <button class="icon-btn trash-icon"></button>
+          </div>
+        </div>
+
+        <div class="split-group">
+          <div class="form-group">
+            <label>Set end date <span class="optional">(optional)</span></label>
+            <div class="input-with-icon">
+              <input type="text" class="custom-input short-input" />
+              <button class="icon-btn trash-icon"></button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
+      <button class="dropdown-toggle" (click)="toggleDropdown()">
+    <div class="toggle-texts">
+      <span class="main-text">Sort by categories</span>
+      @if (selectedCategory()) {
+        <span class="selected-text">{{ selectedCategory() }}</span>
+      }
+    </div>
+    
+    <span class="dropdown-arrow"></span>
+  </button>
+  
+  <ul class="dropdown-menu">
+    @for (category of categories; track category) {
+      <li 
+        class="dropdown-item" 
+        [class.selected]="selectedCategory() === category"
+        (click)="selectCategory(category)">
+        {{ category }}
+      </li>
+    }
+  </ul>
+  
+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-right">
+        <div class="form-group">
+          <label>Describing text <span class="optional">(optional)</span></label>
+          <div class="input-with-icon align-top">
+            <textarea class="custom-input textarea-field"></textarea>
+            <button class="icon-btn trash-icon"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider or Spacing can go here -->
+
+    <!-- Question Section -->
+    <div class="form-row question-section">
+      <div class="col-left">
+        
+        <div class="form-group">
+          <div class="label-with-action">
+            <label>1. Question</label>
+            <button class="icon-btn trash-icon"></button>
+          </div>
+          <input type="text" class="custom-input full-width" placeholder="Which date would work best for you?" />
+        </div>
+
+        <div class="answers-header">
+          <label>Answers</label>
+          <label class="custom-checkbox">
+            <input type="checkbox" />
+            <span class="checkmark"></span>
+            <span class="checkbox-text">Allow multiple answers.</span>
+          </label>
+        </div>
+
+        <div class="answer-row">
+          <span class="answer-letter">A.</span>
+          <div class="input-with-icon">
+            <input type="text" class="custom-input" />
+            <button class="icon-btn trash-icon"></button>
+          </div>
+        </div>
+
+        <div class="answer-row">
+          <span class="answer-letter">B.</span>
+          <div class="input-with-icon">
+            <input type="text" class="custom-input" />
+            <button class="icon-btn trash-icon"></button>
+          </div>
+        </div>
+
+        <button class="add-text-btn">Add answer <span>&#x2295;</span></button>
+
+      </div>
+
+      <!-- Right Column (Add Question Button) -->
+      <div class="col-right action-col">
+        <button class="add-question-btn">Add next question <span>&#x2295;</span></button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="footer-actions">
+    <button class="publish-btn">Publish</button>
+  </div>
+
+</div>
