@@ -1,120 +1,100 @@
 <!-- Surveys Section -->
-  <section class="surveys-section">
-    <h2 class="section-title bubbly-text">Your surveys</h2>
+<section class="surveys-section">
+  <h2 class="section-title bubbly-text">Your surveys</h2>
 
+  <!-- 1. ENDING SOON SURVEYS -->
+  @if (endingSoonSurveys().length > 0) {
     <div class="ending-soon">
       <h3 class="ending-title">Ending soon surveys</h3>
       <div class="cards-container">
         
-        <!-- Card 1 -->
-        <div class="card"  routerLink="surveyDetail">
-          <div class="card-content">
-            <span class="category">Team activities</span>
-            <h4 class="card-title">Let's Plan the Next Team Event Together</h4>
+        @for (survey of endingSoonSurveys(); track survey.id) {
+          <div class="card"[routerLink]="['/surveyDetail', survey.id]">
+            <div class="card-content">
+              <span class="category">{{ survey.category }}</span>
+              <h4 class="card-title">{{ survey.title }}</h4>
+            </div>
+            <span class="badge">{{ getDaysLeft(survey.end_date) }}</span>
           </div>
-          <span class="badge">Ends in 1 Day</span>
-        </div>
+        }
 
-        <!-- Card 2 -->
-        <div class="card">
-          <div class="card-content"  routerLink="surveyDetail">
-            <span class="category">Health & Wellness</span>
-            <h4 class="card-title">Fit & wellness survey!</h4>
-          </div>
-          <span class="badge">Ends in 2 Days</span>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="card"  routerLink="surveyDetail">
-          <div class="card-content">
-            <span class="category">Gaming & Entertainment</span>
-            <h4 class="card-title">Gaming habits and favorite games!</h4>
-          </div>
-          <span class="badge">Ends in 3 Days</span>
-        </div>
       </div>
     </div>
-   <div class="filter-tabs">
-  
-  <div class="tabs-group">
-    <button class="tab active">Active survey</button>
-    <button class="tab">Past survey</button>
-  </div>
-<div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
+  }
+
+  <!-- 2. FILTER TABS & DROPDOWN -->
+  <div class="filter-tabs">
+    <div class="tabs-group">
+      <button
+        class="tab"
+        (click)="currentTab.set('active')"
+        [class.active]="currentTab() === 'active'"
+      >
+        Active survey
+      </button>
+      <button 
+        class="tab" 
+        (click)="currentTab.set('past')" 
+        [class.active]="currentTab() === 'past'"
+      >
+        Past survey
+      </button>
+    </div>
+
+    <!-- Dropdown Κατηγοριών -->
+    <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
       <button class="dropdown-toggle" (click)="toggleDropdown()">
-    <div class="toggle-texts">
-      <span class="main-text">Sort by categories</span>
-      @if (selectedCategory()) {
-        <span class="selected-text">{{ selectedCategory() }}</span>
-      }
+        <div class="toggle-texts">
+          <span class="main-text">Sort by categories</span>
+          @if (selectedCategory()) {
+            <span class="selected-text">{{ selectedCategory() }}</span>
+          }
+        </div>
+        <span class="dropdown-arrow"></span>
+      </button>
+
+      <ul class="dropdown-menu">
+        @for (category of categories; track category) {
+          <li
+            class="dropdown-item"[class.selected]="(selectedCategory() === category) || (category === 'All Categories' && !selectedCategory())"
+            (click)="selectCategory(category)"
+          >
+            {{ category }}
+          </li>
+        }
+      </ul>
     </div>
+  </div>
+
+  <!-- 3. BOTTOM SURVEY GRID (Η λίστα που αλλάζει βάσει του Dropdown & Tab) -->
+  <div class="surveys-list">
     
-    <span class="dropdown-arrow"></span>
-  </button>
-  
-  <ul class="dropdown-menu">
-    @for (category of categories; track category) {
-      <li 
-        class="dropdown-item" 
-        [class.selected]="selectedCategory() === category"
-        (click)="selectCategory(category)">
-        {{ category }}
-      </li>
+    @for (survey of (currentTab() === 'active' ? filteredActiveSurveys() : filteredPastSurveys()); track survey.id) {
+      <div
+        class="list-item"[class.disabled]="currentTab() === 'past'"
+        [routerLink]="currentTab() === 'active' ? ['/surveyDetail', survey.id] : null"
+      >
+        <div class="list-info">
+          <span class="category-small pale-text">{{ survey.category }}</span>
+          <h5 class="list-title pale-text">{{ survey.title }}</h5>
+        </div>
+        
+        <span class="badge">
+          @if (currentTab() === 'active') {
+            {{ getDaysLeft(survey.end_date) }}
+          } @else {
+            Ended: {{ survey.end_date | date: 'dd.MM.yyyy' }}
+          }
+        </span>
+      </div>
     }
-  </ul>
-  
-</div>
 
-</div>
-
-    <!-- Bottom Survey Grid -->
-    <div class="surveys-list">
-      <div class="list-item" routerLink="surveyDetail">
-        <div class="list-info">
-          <span class="category-small pale-text">Team activities</span>
-          <h5 class="list-title pale-text">Let's Plan the Next Team Event Together</h5>
-        </div>
-        <span class="badge">Ends in 1 Day</span>
+    <!-- Αν δεν υπάρχει καμία έρευνα στο επιλεγμένο φίλτρο/tab -->
+    @if ((currentTab() === 'active' ? filteredActiveSurveys() : filteredPastSurveys()).length === 0) {
+      <div style="padding: 2rem; color: #fff; opacity: 0.7;">
+        No surveys found for this category.
       </div>
+    }
 
-      <div class="list-item" routerLink="surveyDetail">
-        <div class="list-info">
-          <span class="category-small pale-text">Gaming</span>
-          <h5 class="list-title pale-text">Gaming habits and favorite games!</h5>
-        </div>
-        <span class="badge">Ends in 3 Days</span>
-      </div>
-
-      <div class="list-item">
-        <div class="list-info">
-          <span class="category-small pale-text">Gaming</span>
-          <h5 class="list-title pale-text">Gaming habits and favorite games!</h5>
-        </div>
-        <span class="badge">Ends in 3 Days</span>
-      </div>
-
-      <div class="list-item">
-        <div class="list-info">
-          <span class="category-small pale-text">Healthy Lifestyle</span>
-          <h5 class="list-title pale-text">Healthier future: Fit & wellness survey!</h5>
-        </div>
-        <span class="badge">Ends in 2 Days</span>
-      </div>
-
-      <div class="list-item">
-        <div class="list-info">
-          <span class="category-small pale-text">Healthy Lifestyle</span>
-          <h5 class="list-title pale-text">Healthier future: Fit & wellness survey!</h5>
-        </div>
-        <span class="badge">Ends in 2 Days</span>
-      </div>
-
-      <div class="list-item">
-        <div class="list-info">
-          <span class="category-small pale-text">Team activities</span>
-          <h5 class="list-title pale-text">Let's Plan the Next Team Event Together</h5>
-        </div>
-        <span class="badge">Ends in 1 Day</span>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
