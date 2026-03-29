@@ -1,77 +1,123 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-
-interface SurveyOption {
-letter: string;
-text: string;
-percentage: number;
-}
-
-interface SurveyQuestion {
-id: number;
-title: string;
-subtext?: string;
-options: SurveyOption[];
-}
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { SupabaseService } from '../../services/supabase';
+import { DatePipe } from '@angular/common';
 
 @Component({
-selector: 'app-survey-detail',
-imports: [RouterLink],
-templateUrl: './survey-detail.html',
-styleUrl: './survey-detail.scss',
+  selector: 'app-survey-detail',
+  standalone: true,
+  imports: [RouterLink, DatePipe],
+  templateUrl: './survey-detail.html',
+  styleUrl: './survey-detail.scss',
 })
-export class SurveyDetail {
-surveyMeta = {
-status: 'Published',
-endDate: '01.09.2025',
-category: 'Team activities',
-title: 'Lets Plan the Next Team Event Together',
-description: 'We want to create team activities that everyone will enjoy – share your preferences and ideas in our survey to help us plan better experiences together.'
-};
-questions: SurveyQuestion[] =[
-{
-id: 1,
-title: 'Which date would work best for you?',
-subtext: 'More than one answers are possible.',
-options:[
-{ letter: 'A', text: '19.09.2025, Friday', percentage: 27 },
-{ letter: 'B', text: '10.10.2025, Friday', percentage: 44 },
-{ letter: 'C', text: '11.10.2025, Saturday', percentage: 3 },
-{ letter: 'D', text: '31.10.2025, Friday', percentage: 26 },
-]
-},
-{
-id: 2,
-title: 'Choose the activities you prefer',
-subtext: 'More than one answers are possible.',
-options:[
-{ letter: 'A', text: 'Outdoor adventure like kayaking', percentage: 60 },
-{ letter: 'B', text: 'Office Costume Party', percentage: 0 },
-{ letter: 'C', text: 'Bowling, mini-golf, volleyball', percentage: 14 },
-{ letter: 'D', text: 'Beach party, Music & cocktails', percentage: 26 },
-{ letter: 'E', text: 'Escape room', percentage: 0 },
-]
-},
-{
-id: 3,
-title: 'Whats most important to you in a team event?',
-options:[
-{ letter: 'A', text: 'Team bonding', percentage: 44 },
-{ letter: 'B', text: 'Food and drinks', percentage: 3 },
-{ letter: 'C', text: 'Trying something new', percentage: 26 },
-{ letter: 'D', text: 'Keeping it low-key and stress-free', percentage: 27 },
-]
-},
+export class SurveyDetail implements OnInit {
+  survey: any = null;
+  isLoading = true;
 
-{
-id: 4,
-title: 'How long would you prefer the event to last?',
-options:[
-{ letter: 'A', text: 'Half a day', percentage: 14 },
-{ letter: 'B', text: 'Full day', percentage: 86 },
-{ letter: 'C', text: 'Evening only', percentage: 0 },
-]
+  constructor(
+    private route: ActivatedRoute,
+    private supabase: SupabaseService,
+    private cdr: ChangeDetectorRef // για χειροκίνητο update
+  ) {}
+
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log('ID:', id);
+
+    if (id) {
+      await this.loadSurvey(id);
+    } else {
+      console.error('Δεν βρέθηκε ID!');
+      this.isLoading = false;
+    }
+  }
+
+  async loadSurvey(id: string) {
+    this.isLoading = true;
+
+    try {
+      const data = await this.supabase.getSurveyById(id);
+      console.log('DATA:', data);
+
+      if (!data) {
+        this.survey = null;
+        return;
+      }
+
+      // normalize options (αν είναι string JSON)
+      const fixedQuestions = (data.questions || []).map((q: any) => ({
+        ...q,
+        options: typeof q.options === 'string'
+          ? JSON.parse(q.options)
+          : q.options
+      }));
+
+      this.survey = {
+        ...data,
+        questions: fixedQuestions
+      };
+
+      // υπολογισμός ποσοστών
+      this.calculatePercentages();
+
+    } catch (err) {
+      console.error("LOAD ERROR:", err);
+    }
+
+    this.isLoading = false;
+    this.cdr.detectChanges(); 
+  }
+
+ calculatePercentages() {
+  if (!this.survey?.questions) return;
+
+  this.survey.questions.forEach((q: any) => {
+    const totalVotes = q.options.reduce((sum: number, opt: any) => 
+      sum + Number(opt.votes || 0), 0
+    );
+
+    q.options.forEach((opt: any) => {
+      const currentVotes = Number(opt.votes || 0);
+      opt.percentage = totalVotes === 0 
+        ? 0 
+        : Math.round((currentVotes / totalVotes) * 100);
+    });
+  });
 }
-];
+
+  //  Local vote update χωρίς reload
+async onVote(questionId: string, optionLetter: string) {
+  try {
+    await this.supabase.vote(questionId, optionLetter);
+    this.survey.questions = this.survey.questions.map((q: any) => {
+      if (q.id === questionId) {
+        const updatedOptions = q.options.map((opt: any) => {
+          if (opt.letter === optionLetter) {
+            return { 
+              ...opt, 
+              votes: Number(opt.votes || 0) + 1, 
+              selected: !opt.selected 
+            };
+          }
+          return opt;
+        });
+        return { ...q, options: updatedOptions };
+      }
+      return q;
+    });
+    this.calculatePercentages();
+    this.cdr.detectChanges();
+
+  } catch (error) {
+    console.error('Error voting:', error);
+    alert('Κάτι πήγε στραβά με την ψήφο σας.');
+  }
+}
+  getSurveyStatus(endDate: string | null): string {
+    if (!endDate) return 'Active';
+    return new Date(endDate) >= new Date() ? 'Active' : 'Ended';
+  }
+  trackById(index: number, item: any) {
+    return item.id;
+  }
 }
