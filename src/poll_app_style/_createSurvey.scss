@@ -5,7 +5,7 @@ $btn-brown: #FFB7704D;
 $text-light: #ffffff;
 $primary-orange: #ffb770;
 $badge-bg: #ffdfbe;
-$publish-bg: #ffce9e;
+
 
 .create-survey-container {
   background-color: $bg-outer;
@@ -47,7 +47,7 @@ $publish-bg: #ffce9e;
   border: none;
   border-radius: 10px;
   padding: 8px 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -70,12 +70,13 @@ $publish-bg: #ffce9e;
   display: flex;
   gap: 40px;
   margin-bottom: 30px;
+}
 
-  &.question-section {
-    margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Ελαφρύ διαχωριστικό */
-    padding-top: 30px;
-  }
+.col-left, .col-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .col-left, .col-right {
@@ -221,6 +222,8 @@ $publish-bg: #ffce9e;
 
 /* --- Add Buttons --- */
 .add-text-btn {
+  width: 146px;
+  height: 40px;
   background: none;
   border: none;
   color: $text-light;
@@ -228,13 +231,19 @@ $publish-bg: #ffce9e;
   text-decoration: underline;
   cursor: pointer;
   text-align: left;
-  padding: 0;
+  padding-left: 3px;
   margin-top: 5px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  font-size: 1rem;
+  transition: color 0.2s;
 
   span { font-style: normal; text-decoration: none; }
+  
+  &:hover {
+    background-color: #D9D9D929;
+  }
 }
 
 .add-question-btn {
@@ -248,27 +257,34 @@ $publish-bg: #ffce9e;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 1rem;
   transition: opacity 0.2s;
 
   &:hover { opacity: 0.8; }
 }
 
-/* --- Footer --- */
 .footer-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-.publish-btn {
-  background-color: $publish-bg;
-  color: #35273a;
-  border: none;
-  border-radius: 12px;
-  padding: 12px 30px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.2s;
+.questions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05); 
+  padding-top: 30px;
+}
 
-  &:hover { transform: scale(1.05); }
+.question-block {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.action-block {
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 32px; 
 }

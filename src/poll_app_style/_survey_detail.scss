@@ -98,6 +98,10 @@
   gap: 12px;
   cursor: pointer;
   user-select: none;
+
+   &:hover {
+     background-color:#fce1c6;
+   }
 }
 
 .custom-checkbox-label input {
@@ -133,7 +137,7 @@
   top: 1px;
   width: 5px;
   height: 10px;
-  border: solid white;
+  border: solid;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -151,10 +155,6 @@
     color: var(--text-dark);
     font-weight: 700;
   }
-}
-
-.option-text:hover {
-  background-color:#fce1c6;
 }
 
 .form-footer {
