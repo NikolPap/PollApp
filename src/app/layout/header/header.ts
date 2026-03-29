@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
-  standalone: true, // Αν χρησιμοποιείς standalone components
-  imports:[],
+  standalone: true,
+  imports: [RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

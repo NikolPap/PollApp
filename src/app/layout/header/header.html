@@ -1,11 +1,13 @@
 <header class="main-header">
-        @if (path == '') {
-        <img src="/assets/images/orangeLogo.svg" alt="orange pollapp logo" />
-}
+  @if (path == '') {
+    <img src="/assets/images/orangeLogo.svg" alt="orange pollapp logo" />
+  }
 
-@if(path == 'surveyDetail') {
-        <img src="/assets/images/purpleLogo.svg" alt="orange pollapp logo" />
-        <button class="new-survey-btn">Create survey</button>
-}
-
+  @if (path == 'surveyDetail') {
+    <img routerLink="" src="/assets/images/purpleLogo.svg" alt="orange pollapp logo" />
+    <button class="new-survey-btn">
+      Create survey
+      <img src="/assets/images/add_circle_purple.svg" class="add-icon" alt="add icon" />
+    </button>
+  }
 </header>
