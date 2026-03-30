@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,12 @@ import { Subscription } from 'rxjs';
   styleUrl: './header.scss',
 })
 export class Header implements OnInit, OnDestroy {
+
+     @Output() openCreateSurvey = new EventEmitter<void>();
+
+  triggerCreateSurvey() {
+    this.openCreateSurvey.emit();
+  }
 
 
     path = '';
