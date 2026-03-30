@@ -1,18 +1,13 @@
 <div class="survey-page-wrapper">
-
   <!-- Loading -->
   @if (isLoading) {
-    <div style="text-align: center; color: white; padding: 3rem;">
+    <div style="text-align: center; color: white; padding: 3rem">
       <h2 class="bubbly-text">Loading survey...</h2>
     </div>
-  } 
-  @else if (survey !== null) {
-
+  } @else if (survey !== null) {
     <div class="survey-layout">
-
       <!-- LEFT PANEL: Survey Form -->
       <div class="survey-form-panel">
-
         <!-- Meta Section -->
         <div class="meta-section">
           <span class="badge">Published</span>
@@ -35,15 +30,15 @@
               <p class="question-subtext">
                 {{ q.allow_multiple ? 'Multiple answers are possible.' : 'Choose one answer.' }}
               </p>
-
               <div class="options-group">
                 @for (opt of q.options; track opt.letter) {
+                  <!-- Αφαιρέσαμε τα [class.disabled] και [disabled] -->
                   <label class="custom-checkbox-label">
                     <input
-                      type="checkbox"
+                      [type]="q.allow_multiple ? 'checkbox' : 'radio'"
                       [name]="'q' + q.id"
                       [checked]="opt.selected"
-                      (change)="onVote(q.id, opt.letter);"
+                      (change)="onVote(q, opt.letter, $event)"
                     />
                     <span class="checkmark" style="border-radius: 4px"></span>
                     <span class="option-text">
@@ -87,15 +82,11 @@
           }
         </div>
       </div>
-
     </div>
-
-  } 
-  @else {
-    <div style="text-align: center; color: white; padding: 3rem;">
+  } @else {
+    <div style="text-align: center; color: white; padding: 3rem">
       <h2 class="bubbly-text">Survey not found</h2>
       <button class="complete-btn" routerLink="/">Go Back</button>
     </div>
   }
-
 </div>
