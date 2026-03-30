@@ -1,6 +1,5 @@
 <div class="create-survey-container">
   
-  <!-- Header of the Survey Creation -->
   <div class="header-section">
     <div class="title-area">
       <span class="badge draft">Draft</span>
@@ -9,35 +8,44 @@
     <button class="cancel-btn" routerLink="">Cancel <img src="/assets/images/close.svg" alt="close button"></button>
   </div>
 
-  <!-- Inner Form Container -->
   <div class="form-card">
     
-    <!-- Top Row (Name & Description) -->
     <div class="form-row">
-      <!-- Left Column -->
       <div class="col-left">
         <div class="form-group">
+          <!-- Mandatory Marker hinzugefügt -->
           <label>Survey name</label>
           <div class="input-with-icon">
-            <input type="text" class="custom-input" />
-            <button class="icon-btn trash-icon"></button>
+            <input type="text" 
+                   class="custom-input" 
+                   [class.invalid]="showValidationErrors() && !surveyTitle.trim()" 
+                   [(ngModel)]="surveyTitle" />
+            <button class="icon-btn trash-icon" (click)="clearTitle()"></button>
           </div>
+          <!-- Fehlermeldung -->
+          @if (showValidationErrors() && !surveyTitle.trim()) {
+            <div class="error-text">Please enter a survey name.</div>
+          }
         </div>
 
         <div class="split-group">
           <div class="form-group">
             <label>Set end date <span class="optional">(optional)</span></label>
             <div class="input-with-icon">
-              <input type="text" class="custom-input short-input" />
-              <button class="icon-btn trash-icon"></button>
+              <input type="datetime-local" class="custom-input short-input" [(ngModel)]="surveyEndDate" />
+              <button class="icon-btn trash-icon" (click)="clearDate()"></button>
             </div>
           </div>
 
           <div class="form-group">
             <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
-              <button class="dropdown-toggle" (click)="toggleDropdown()">
+              <!-- [class.invalid] auf Button angewendet -->
+              <button class="dropdown-toggle" 
+                      [class.invalid]="showValidationErrors() && !selectedCategory()" 
+                      (click)="toggleDropdown()">
                 <div class="toggle-texts">
-                  <span class="main-text">Choose category </span>
+                
+                  <span class="main-text">Choose category</span>
                   @if (selectedCategory()) {
                     <span class="selected-text">{{ selectedCategory() }}</span>
                   }
@@ -47,31 +55,33 @@
               
               <ul class="dropdown-menu">
                 @for (category of categories; track category) {
-                  <li 
-                    class="dropdown-item"[class.selected]="selectedCategory() === category"
-                    (click)="selectCategory(category)">
+                  <li class="dropdown-item" [class.selected]="selectedCategory() === category"
+                      (click)="selectCategory(category)">
                     {{ category }}
                   </li>
                 }
               </ul>
             </div>
+            <!-- Fehlermeldung -->
+            @if (showValidationErrors() && !selectedCategory()) {
+              <div class="error-text">Please select a category.</div>
+            }
           </div>
         </div>
       </div>
 
-      <!-- Right Column -->
       <div class="col-right">
         <div class="form-group">
           <label>Describing text <span class="optional">(optional)</span></label>
           <div class="input-with-icon align-top">
-            <textarea class="custom-input textarea-field"></textarea>
-            <button class="icon-btn trash-icon"></button>
+            <textarea class="custom-input textarea-field" [(ngModel)]="surveyDescription"></textarea>
+            <button class="icon-btn trash-icon" (click)="clearDescription()"></button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Dynamic Question Section (Grid) -->
+    <!-- Fragenbereich -->
     <div class="questions-grid">
       
       @for (q of questions(); track q.id; let qIndex = $index) {
@@ -79,19 +89,27 @@
           
           <div class="form-group">
             <div class="label-with-action">
+              
               <label>{{ qIndex + 1 }}. Question</label>
-              <!-- Show trash icon only if there's more than 1 question -->
               @if (questions().length > 1) {
                 <button class="icon-btn trash-icon" (click)="removeQuestion(q.id)"></button>
               }
             </div>
-            <input type="text" class="custom-input full-width" placeholder="Write your question here..." />
+            <input type="text" 
+                   class="custom-input full-width" 
+                   [class.invalid]="showValidationErrors() && !q.text.trim()"
+                   placeholder="Write your question here..." 
+                   [(ngModel)]="q.text" />
+            <!-- Fehlermeldung -->
+            @if (showValidationErrors() && !q.text.trim()) {
+              <div class="error-text">Question text is required.</div>
+            }
           </div>
 
           <div class="answers-header">
             <label>Answers</label>
             <label class="custom-checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" [(ngModel)]="q.allowMultiple" />
               <span class="checkmark"></span>
               <span class="checkbox-text">Allow multiple answers.</span>
             </label>
@@ -101,8 +119,7 @@
             <div class="answer-row">
               <span class="answer-letter">{{ getAnswerLetter(aIndex) }}.</span>
               <div class="input-with-icon">
-                <input type="text" class="custom-input" />
-                <!-- Prevent deleting if 2 or fewer answers remain -->
+                <input type="text" class="custom-input" [(ngModel)]="a.text" />
                 @if (q.answers.length > 2) {
                   <button class="icon-btn trash-icon" (click)="removeAnswer(q.id, a.id)"></button>
                 }
@@ -110,20 +127,23 @@
             </div>
           }
 
-          <!-- Limit answers to 6 -->
+          <!-- Fehlermeldung für zu wenige Antworten -->
+          @if (showValidationErrors() && getValidAnswersCount(q) < 2) {
+            <div class="error-text">Please provide at least 2 answers.</div>
+          }
+
           @if (q.answers.length < 6) {
             <button class="add-text-btn" (click)="addAnswer(q.id)">
-              Add answer <img src="\assets\images\add_circle.svg" alt="add circle icon">
+              Add answer <img src="/assets/images/add_circle.svg" alt="add circle icon">
             </button>
           }
 
         </div>
       }
 
-      <!-- The Add Question Button functions as a grid item itself -->
       <div class="question-block action-block">
         <button class="add-question-btn" (click)="addQuestion()">
-          Add next question <img src="\assets\images\add_circle.svg" alt="add circle icon">
+          Add next question <img src="/assets/images/add_circle.svg" alt="add circle icon">
         </button>
       </div>
 
@@ -131,10 +151,9 @@
 
   </div>
 
-  <!-- Footer Actions -->
   <div class="footer-actions">
-  <button routerLink="" class="new-survey-btn">
-    Publish
+    <button class="new-survey-btn" (click)="publishSurvey()" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Publishing...' : 'Publish' }}
       <img src="/assets/images/check.svg" class="add-icon" alt="add icon" />
     </button>
   </div>
