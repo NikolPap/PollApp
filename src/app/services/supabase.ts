@@ -41,7 +41,7 @@ async getSurveyById(id: string) {
 }
 
   async createSurvey(surveyData: any, questionsData: any[]) {
-    // 1. Save Survey
+
     const { data: survey, error: surveyError } = await this.supabase
       .from('surveys')
       .insert([surveyData])
@@ -49,7 +49,6 @@ async getSurveyById(id: string) {
       .single();
     if (surveyError) throw surveyError;
 
-    // 2. Save Questions
     const qsToInsert = questionsData.map(q => ({
       survey_id: survey.id,
       title: q.text,
@@ -67,12 +66,34 @@ async getSurveyById(id: string) {
     return survey;
   }
 
-  // --- US 5: Ψηφοφορία ---
-  async vote(questionId: string, optionLetter: string) {
-    const { error } = await this.supabase.rpc('vote_for_option', {
+ async vote(questionId: string, optionLetter: string, addVote: boolean) {
+    const { error } = await this.supabase.rpc('toggle_vote', {
       q_id: questionId,
-      opt_letter: optionLetter
+      opt_letter: optionLetter,
+      add_vote: addVote 
     });
     if (error) throw error;
   }
+
+  listenToSurveyResults(surveyId: string, callback: (payload: any) => void) {
+  return this.supabase
+    .channel('live-survey-results')
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE', 
+        schema: 'public',
+        table: 'questions',
+        filter: `survey_id=eq.${surveyId}`
+      },
+      (payload) => {
+        callback(payload);
+      }
+    )
+    .subscribe();
+}
+
+removeChannel(channel: any) {
+  this.supabase.removeChannel(channel);
+}
 }
