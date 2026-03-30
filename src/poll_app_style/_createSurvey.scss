@@ -140,6 +140,10 @@ $badge-bg: #ffdfbe;
     resize: none;
     height: 100px;
   }
+
+  &:focus {
+    background-color: #FEE9D4;
+  }
 }
 
 
@@ -287,4 +291,22 @@ $badge-bg: #ffdfbe;
   justify-content: flex-start;
   align-items: flex-start;
   margin-top: 32px; 
+}
+
+
+.custom-input.invalid,
+.dropdown-toggle.invalid {
+  border: 1px solid #ff4d4f;
+  background-color: #fff0f0; 
+  
+  &:focus {
+    background-color: #fff0f0;
+  }
+}
+
+
+.error-text {
+  color: #ff4d4f;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }

@@ -171,16 +171,33 @@ header {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  max-width: 1380px;
+  max-height: 450px;   
+  overflow-y: auto;    
+}
+
+.surveys-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.surveys-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.surveys-list::-webkit-scrollbar-thumb {
+  background-color: #ffb770;
+  border-radius: 10px;
 }
 
 .list-item {
   background-color: #d9d9d914;
   border-radius: 0 50px 0 0;
   padding: 15px 30px;
+  height: 127px;              
+  box-sizing: border-box;     
   display: flex;
   flex-direction: column;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
-  max-width: 573px;
+  justify-content: space-between;
 }
 
 .list-item:hover {
@@ -369,3 +386,4 @@ header {
   cursor: not-allowed;
   pointer-events: none; 
 }
+
