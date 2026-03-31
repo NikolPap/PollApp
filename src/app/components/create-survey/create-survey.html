@@ -1,79 +1,63 @@
-<!-- Modal Backdrop -->
 <div class="modal-backdrop" (click)="cancel()">
+  
   <div class="create-survey-container" (click)="$event.stopPropagation()">
+    
     <div class="header-section">
       <div class="title-area">
         <span class="badge draft">Draft</span>
         <h1 class="bubbly-text title">Create new survey</h1>
       </div>
-      <button class="cancel-btn" (click)="cancel()">
-        Cancel <img src="/assets/images/close.svg" alt="close button" />
-      </button>
+      <button class="cancel-btn" (click)="cancel()">Cancel <img src="/assets/images/close.svg" alt="close button"></button>
     </div>
 
     <div class="form-card">
       <div class="form-row">
         <div class="col-left">
+          
           <div class="form-group">
-            <label>Survey name</label>
+            <label>Survey name <span class="mandatory">*</span></label>
             <div class="input-with-icon">
-              <input
-                type="text"
-                class="custom-input"
-                [class.invalid]="showValidationErrors() && !surveyTitle.trim()"
-                [(ngModel)]="surveyTitle"
-              />
+              <input type="text" class="custom-input" [class.invalid]="showValidationErrors() && !surveyTitle.trim()" [(ngModel)]="surveyTitle" />
               <button class="icon-btn trash-icon" (click)="clearTitle()"></button>
             </div>
-            @if (showValidationErrors() && !surveyTitle.trim()) {
-              <div class="error-text">Please enter a survey name.</div>
-            }
+            @if (showValidationErrors() && !surveyTitle.trim()) { <div class="error-text">Please enter a survey name.</div> }
           </div>
 
           <div class="split-group">
             <div class="form-group">
               <label>Set end date <span class="optional">(optional)</span></label>
               <div class="input-with-icon">
-                <input
-                  type="datetime-local"
-                  class="custom-input short-input"
-                  [(ngModel)]="surveyEndDate"
-                />
+                <input type="datetime-local" class="custom-input short-input" [(ngModel)]="surveyEndDate" />
                 <button class="icon-btn trash-icon" (click)="clearDate()"></button>
               </div>
             </div>
-
             <div class="form-group">
-              <label>Category</label>
-              <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
-                <button
-                  class="dropdown-toggle"
-                  [class.invalid]="showValidationErrors() && !selectedCategory()"
-                  (click)="toggleDropdown()"
-                >
+              <label>Category <span class="mandatory">*</span></label>
+              
+              <div class="sort-dropdown" #sortDropdown [class.open]="dropdown.isOpen()">
+                <button class="dropdown-toggle" 
+                        [class.invalid]="showValidationErrors() && !dropdown.selectedItem()" 
+                        (click)="dropdown.toggle()">
                   <div class="toggle-texts">
                     <span class="main-text">Choose category</span>
-                    @if (selectedCategory()) {
-                      <span class="selected-text">{{ selectedCategory() }}</span>
+                    @if (dropdown.selectedItem()) { 
+                      <span class="selected-text">{{ dropdown.selectedItem() }}</span> 
                     }
                   </div>
                   <span class="dropdown-arrow"></span>
                 </button>
+                
                 <ul class="dropdown-menu">
                   @for (category of categories; track category) {
-                    <li
-                      class="dropdown-item"
-                      [class.selected]="selectedCategory() === category"
-                      (click)="selectCategory(category)"
-                    >
+                    <li class="dropdown-item" 
+                        [class.selected]="dropdown.selectedItem() === category" 
+                        (click)="dropdown.select(category)">
                       {{ category }}
                     </li>
                   }
                 </ul>
               </div>
-              @if (showValidationErrors() && !selectedCategory()) {
-                <div class="error-text">Please select a category.</div>
-              }
+              @if (showValidationErrors() && !dropdown.selectedItem()) { <div class="error-text">Please select a category.</div> }
             </div>
           </div>
         </div>
@@ -82,10 +66,7 @@
           <div class="form-group">
             <label>Describing text <span class="optional">(optional)</span></label>
             <div class="input-with-icon align-top">
-              <textarea
-                class="custom-input textarea-field"
-                [(ngModel)]="surveyDescription"
-              ></textarea>
+              <textarea class="custom-input textarea-field" [(ngModel)]="surveyDescription"></textarea>
               <button class="icon-btn trash-icon" (click)="clearDescription()"></button>
             </div>
           </div>
@@ -95,33 +76,22 @@
       <div class="questions-grid">
         @for (q of questions(); track q.id; let qIndex = $index) {
           <div class="question-block">
+            
             <div class="form-group">
               <div class="label-with-action">
-                <label>{{ qIndex + 1 }}. Question</label>
-                @if (questions().length > 1) {
-                  <button class="icon-btn trash-icon" (click)="removeQuestion(q.id)"></button>
-                }
+                <label>{{ qIndex + 1 }}. Question <span class="mandatory">*</span></label>
+                @if (questions().length > 1) { <button class="icon-btn trash-icon" (click)="removeQuestion(q.id)"></button> }
               </div>
-              <input
-                type="text"
-                class="custom-input full-width"
-                [class.invalid]="showValidationErrors() && !q.text.trim()"
-                placeholder="Write your question here..."
-                [(ngModel)]="q.text"
-              />
-              @if (showValidationErrors() && !q.text.trim()) {
-                <div class="error-text">Question text is required.</div>
-              }
+              <input type="text" class="custom-input full-width" [class.invalid]="showValidationErrors() && !q.text.trim()" placeholder="Write your question here..." [(ngModel)]="q.text" />
+              @if (showValidationErrors() && !q.text.trim()) { <div class="error-text">Question text is required.</div> }
             </div>
 
             <div class="answers-header">
-              <label>Answer</label>
+              <label>Answers <span class="mandatory">*</span></label>
               <label class="custom-checkbox">
-                <input
-                  type="checkbox"
-                  [ngModel]="q.allowMultiple"
-                  (ngModelChange)="toggleAllowMultiple(q.id, $event)"
-                />
+                <input type="checkbox" 
+                       [ngModel]="q.allowMultiple" 
+                       (ngModelChange)="toggleAllowMultiple(q.id, $event)" />
                 <span class="checkmark"></span>
                 <span class="checkbox-text">Allow multiple answers.</span>
               </label>
@@ -131,35 +101,20 @@
               <div class="answer-row">
                 <span class="answer-letter">{{ getAnswerLetter(aIndex) }}.</span>
                 <div class="input-with-icon">
-                  <input
-                    type="text"
-                    class="custom-input"
-                    [class.invalid]="
-                      showValidationErrors() && !a.text.trim() && getValidAnswersCount(q) < 2
-                    "
-                    [(ngModel)]="a.text"
-                  />
-                  @if (q.answers.length > 2) {
-                    <button class="icon-btn trash-icon" (click)="removeAnswer(q.id, a.id)"></button>
-                  }
+                  <input type="text" class="custom-input" [class.invalid]="showValidationErrors() && !a.text.trim() && getValidAnswersCount(q) < 2" [(ngModel)]="a.text" />
+                  @if (q.answers.length > 2) { <button class="icon-btn trash-icon" (click)="removeAnswer(q.id, a.id)"></button> }
                 </div>
               </div>
             }
-            @if (showValidationErrors() && getValidAnswersCount(q) < 2) {
-              <div class="error-text">Please provide at least 2 answers.</div>
-            }
+            @if (showValidationErrors() && getValidAnswersCount(q) < 2) { <div class="error-text">Please provide at least 2 answers.</div> }
 
             @if (q.answers.length < 6) {
-              <button class="add-text-btn" (click)="addAnswer(q.id)">
-                Add answer <img src="/assets/images/add_circle.svg" alt="add circle icon" />
-              </button>
+              <button class="add-text-btn" (click)="addAnswer(q.id)">Add answer <img src="/assets/images/add_circle.svg" alt="add circle icon"></button>
             }
           </div>
         }
         <div class="question-block action-block">
-          <button class="add-question-btn" (click)="addQuestion()">
-            Add next question <img src="/assets/images/add_circle.svg" alt="add circle icon" />
-          </button>
+          <button class="add-question-btn" (click)="addQuestion()">Add next question <img src="/assets/images/add_circle.svg" alt="add circle icon"></button>
         </div>
       </div>
     </div>
@@ -170,28 +125,16 @@
         <img src="/assets/images/check.svg" class="add-icon" alt="add icon" />
       </button>
     </div>
+    @if (showToast()) {
+      <div class="toast-message">
+        <span class="bubbly-text">Your survey is now<br>published</span>
+        <button class="toast-close-btn" (click)="closeToastAndReload()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L13 13M1 13L13 1" stroke="#35273A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    }
+
   </div>
 </div>
-
-@if (showToast()) {
-  <div class="toast-message">
-    <span class="bubbly-text">Your survey is now<br />published</span>
-    <button class="toast-close-btn" (click)="closeToastAndReload()">
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 1L13 13M1 13L13 1"
-          stroke="#35273A"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
-  </div>
-}

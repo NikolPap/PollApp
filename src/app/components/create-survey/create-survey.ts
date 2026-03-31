@@ -2,9 +2,8 @@ import { Component, signal, ElementRef, ViewChild, HostListener, inject } from '
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase';
 import { ModalService } from '../../services/modal.service';
-
-interface Answer { id: number; text: string; }
-interface Question { id: number; text: string; allowMultiple: boolean; answers: Answer[]; }
+import { DropdownService } from '../../services/dropdown.service';
+import { Question, Answer, SURVEY_CATEGORIES } from '../../models/survey.types';
 
 @Component({
   selector: 'app-create-survey',
@@ -12,10 +11,15 @@ interface Question { id: number; text: string; allowMultiple: boolean; answers: 
   imports: [FormsModule],
   templateUrl: './create-survey.html',
   styleUrl: './create-survey.scss',
+  providers: [DropdownService]
 })
 export class CreateSurvey {
   private supabaseService = inject(SupabaseService);
   modalService = inject(ModalService);
+  dropdown = inject(DropdownService);
+  categories = SURVEY_CATEGORIES;
+
+  @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
 
   cancel() {
     this.modalService.isCreateSurveyOpen.set(false);
@@ -30,15 +34,6 @@ export class CreateSurvey {
   isSubmitting = signal<boolean>(false);
   showValidationErrors = signal<boolean>(false);
 
-  isDropdownOpen = signal(false);
-  selectedCategory = signal<string | null>(null);
-  categories = [
-    'Team Activities', 'Health & Wellness', 'Gaming & Entertainment',
-    'Education & Learning', 'Lifestyle & Preferences', 'Technology & Innovation'
-  ];
-
-  @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
-
   nextQuestionId = 2;
   nextAnswerId = 3;
 
@@ -50,7 +45,7 @@ export class CreateSurvey {
   clearDate() { this.surveyEndDate = ''; }
   clearDescription() { this.surveyDescription = ''; }
 
-   toggleAllowMultiple(questionId: number, newValue: boolean) {
+  toggleAllowMultiple(questionId: number, newValue: boolean) {
     this.questions.update(qs => qs.map(q => {
       if (q.id === questionId) {
         return { ...q, allowMultiple: newValue };
@@ -75,22 +70,17 @@ export class CreateSurvey {
 
   getAnswerLetter(index: number): string { return String.fromCharCode(65 + index); }
   getValidAnswersCount(question: Question): number { return question.answers.filter(a => a.text.trim() !== '').length; }
-
-  toggleDropdown() { this.isDropdownOpen.update(open => !open); }
-  selectCategory(category: string) { this.selectedCategory.set(category); this.isDropdownOpen.set(false); }
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
-    if (this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target)) {
-      this.isDropdownOpen.set(false);
+    if (this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target as Node)) {
+      this.dropdown.close();
     }
   }
 
   async publishSurvey() {
     this.showValidationErrors.set(true);
     let hasErrors = false;
-
-    if (!this.surveyTitle.trim() || !this.selectedCategory()) hasErrors = true;
+    if (!this.surveyTitle.trim() || !this.dropdown.selectedItem()) hasErrors = true;
 
     const formattedQuestions = [];
     for (const q of this.questions()) {
@@ -102,8 +92,9 @@ export class CreateSurvey {
     if (hasErrors || formattedQuestions.length === 0) return;
 
     const surveyData = {
-      title: this.surveyTitle, description: this.surveyDescription,
-      category: this.selectedCategory(),
+      title: this.surveyTitle, 
+      description: this.surveyDescription,
+      category: this.dropdown.selectedItem(), // Παίρνουμε την τιμή από το Service
       end_date: this.surveyEndDate ? new Date(this.surveyEndDate).toISOString() : null
     };
 
@@ -125,5 +116,5 @@ export class CreateSurvey {
     this.showToast.set(false);
     this.modalService.isCreateSurveyOpen.set(false);
     window.location.reload(); 
-}
+  }
 }
