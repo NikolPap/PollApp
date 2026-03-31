@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ModalService } from '../../services/modal.service'; // Προσθήκη
 
 @Component({
   selector: 'app-hero-and-ending',
-  imports: [RouterLink],
+  standalone: true,
   templateUrl: './hero-and-ending.html',
   styleUrl: './hero-and-ending.scss',
 })
-export class HeroAndEnding {}
+export class HeroAndEnding {
+  modalService = inject(ModalService); 
+}

@@ -6,7 +6,7 @@
       Create and share surveys in minutes – from team events to workplace culture. Collect opinions,
       engage your audience, and turn feedback into action.
     </p>
-    <button routerLink="createSurvey" class="new-survey-btn">
+    <button (click)="modalService.isCreateSurveyOpen.set(true)" class="new-survey-btn">
       New survey
       <img src="/assets/images/add_circle_purple.svg" class="add-icon" alt="add icon" />
     </button>
