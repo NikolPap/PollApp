@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-
+import { ModalService } from '../../services/modal.service'; // Προσθήκη
 
 @Component({
   selector: 'app-header',
@@ -11,17 +11,10 @@ import { Subscription } from 'rxjs';
   styleUrl: './header.scss',
 })
 export class Header implements OnInit, OnDestroy {
-
-     @Output() openCreateSurvey = new EventEmitter<void>();
-
-  triggerCreateSurvey() {
-    this.openCreateSurvey.emit();
-  }
-
-
     path = '';
     private router = inject(Router);
     private routerSub: Subscription | undefined;
+    modalService = inject(ModalService); // Προσθήκη
 
     ngOnInit() {
         this.updatePath(this.router.url);
@@ -32,15 +25,13 @@ export class Header implements OnInit, OnDestroy {
         });
     }
 
-      private updatePath(url: string) {
-    if (url === '/' || url === '') {
-        this.path = '';
-    } else if (url.includes('surveyDetail')) {
-        this.path = 'surveyDetail';
-    } else if (url.includes('createSurvey')) {
-        this.path = 'createSurvey';
+    private updatePath(url: string) {
+        if (url === '/' || url === '') {
+            this.path = '';
+        } else if (url.includes('surveyDetail')) {
+            this.path = 'surveyDetail';
+        }
     }
-}
 
     ngOnDestroy() {
         if (this.routerSub) {
