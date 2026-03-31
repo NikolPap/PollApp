@@ -1,7 +1,7 @@
 :root {
   --text-dark: #35273a;
-  --bg-panel: #f4f0f9; 
-  --btn-bg: #fce1c6; 
+  --bg-panel: #f4f0f9;
+  --btn-bg: #fce1c6;
 }
 
 .survey-layout {
@@ -12,12 +12,14 @@
   align-items: flex-start;
   margin-top: 20px;
   padding-bottom: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .survey-form-panel {
   flex: 1.3;
   background-color: var(--bg-panel);
-  border-radius: 0 150px 0 0; 
+  border-radius: 0 150px 0 0;
   padding: 60px 80px 60px 40px;
 }
 
@@ -26,7 +28,7 @@
 }
 
 .status-badge {
-  background-color: var(--badge-bg); 
+  background-color: var(--badge-bg);
   color: var(--text-dark);
   font-size: 0.95rem;
   font-weight: 600;
@@ -99,9 +101,9 @@
   cursor: pointer;
   user-select: none;
 
-   &:hover {
-     background-color:#fce1c6;
-   }
+  &:hover {
+    background-color: #fce1c6;
+  }
 }
 
 .custom-checkbox-label input {
@@ -130,7 +132,7 @@
 }
 
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
   left: 5px;
@@ -150,7 +152,7 @@
   color: #4a4a4a;
   font-size: 1rem;
   line-height: 1.4;
-  
+
   strong {
     color: var(--text-dark);
     font-weight: 700;
@@ -173,7 +175,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
     background-color: var(--primary-color);
   }
@@ -191,7 +193,7 @@
   font-size: 2rem;
   color: var(--text-dark);
   margin-bottom: 40px;
-  
+
   .live {
     color: var(--primary-color);
     margin-left: 8px;
@@ -247,7 +249,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: var(--primary-color); 
+  background-color: var(--primary-color);
   border-radius: 10px;
   transition: width 0.8s ease-in-out;
 }
