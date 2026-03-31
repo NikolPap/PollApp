@@ -1,7 +1,9 @@
-import { Component, signal, computed, ElementRef, ViewChild, HostListener, OnInit } from '@angular/core';
+import { Component, signal, computed, ElementRef, ViewChild, HostListener, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
 import { DatePipe } from '@angular/common';
+import { DropdownService } from '../../services/dropdown.service';
+import { SURVEY_CATEGORIES } from '../../models/survey.types';
 
 @Component({
   selector: 'app-survey-list-filters',
@@ -9,41 +11,30 @@ import { DatePipe } from '@angular/common';
   imports: [RouterLink, DatePipe],
   templateUrl: './survey-list-filters.html',
   styleUrl: './survey-list-filters.scss',
+  providers: [DropdownService] 
 })
 export class SurveyListFilters implements OnInit {
 
-  isDropdownOpen = signal(false);
-  selectedCategory = signal<string | null>(null);
-
-  categories = [
-    'All Categories',
-    'Team Activities', 
-    'Health & Wellness',
-    'Gaming & Entertainment',
-    'Education & Learning',
-    'Lifestyle & Preferences',
-    'Technology & Innovation'
-  ];
+  dropdown = inject(DropdownService); 
+  categories = ['All Categories', ...SURVEY_CATEGORIES];
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
 
-  // DATA
+
   surveys = signal<any[]>([]);
   activeSurveys = signal<any[]>([]);
   pastSurveys = signal<any[]>([]);
   endingSoonSurveys = signal<any[]>([]);
 
   currentTab = signal<'active' | 'past'>('active');
-
-  // FILTERS
   filteredActiveSurveys = computed(() => {
-    const category = this.selectedCategory();
+    const category = this.dropdown.selectedItem();
     if (!category) return this.activeSurveys();
     return this.activeSurveys().filter(s => s.category === category);
   });
 
   filteredPastSurveys = computed(() => {
-    const category = this.selectedCategory();
+    const category = this.dropdown.selectedItem();
     if (!category) return this.pastSurveys();
     return this.pastSurveys().filter(s => s.category === category);
   });
@@ -88,23 +79,10 @@ export class SurveyListFilters implements OnInit {
     }
   }
 
-  toggleDropdown() {
-    this.isDropdownOpen.update(open => !open);
-  }
-
-  selectCategory(category: string) {
-    if (category === 'All Categories') {
-      this.selectedCategory.set(null);
-    } else {
-      this.selectedCategory.set(category);
-    }
-    this.isDropdownOpen.set(false);
-  }
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
-    if (this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target)) {
-      this.isDropdownOpen.set(false);
+    if (this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target as Node)) {
+      this.dropdown.close();
     }
   }
 

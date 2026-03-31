@@ -2,14 +2,13 @@
 <section class="surveys-section">
   <h2 class="section-title bubbly-text">Your surveys</h2>
 
-  <!-- 1. ENDING SOON SURVEYS -->
   @if (endingSoonSurveys().length > 0) {
     <div class="ending-soon">
       <h3 class="ending-title">Ending soon surveys</h3>
       <div class="cards-container">
         
         @for (survey of endingSoonSurveys(); track survey.id) {
-          <div class="card"[routerLink]="['/surveyDetail', survey.id]">
+          <div class="card" [routerLink]="['/surveyDetail', survey.id]">
             <div class="card-content">
               <span class="category">{{ survey.category }}</span>
               <h4 class="card-title">{{ survey.title }}</h4>
@@ -21,8 +20,6 @@
       </div>
     </div>
   }
-
-  <!-- 2. FILTER TABS & DROPDOWN -->
   <div class="filter-tabs">
     <div class="tabs-group">
       <button
@@ -40,14 +37,12 @@
         Past survey
       </button>
     </div>
-
-    <!-- Dropdown Κατηγοριών -->
-    <div class="sort-dropdown" #sortDropdown [class.open]="isDropdownOpen()">
-      <button class="dropdown-toggle" (click)="toggleDropdown()">
+    <div class="sort-dropdown" #sortDropdown [class.open]="dropdown.isOpen()">
+      <button class="dropdown-toggle" (click)="dropdown.toggle()">
         <div class="toggle-texts">
           <span class="main-text">Sort by categories</span>
-          @if (selectedCategory()) {
-            <span class="selected-text">{{ selectedCategory() }}</span>
+          @if (dropdown.selectedItem()) {
+            <span class="selected-text">{{ dropdown.selectedItem() }}</span>
           }
         </div>
         <span class="dropdown-arrow"></span>
@@ -56,8 +51,9 @@
       <ul class="dropdown-menu">
         @for (category of categories; track category) {
           <li
-            class="dropdown-item"[class.selected]="(selectedCategory() === category) || (category === 'All Categories' && !selectedCategory())"
-            (click)="selectCategory(category)"
+            class="dropdown-item"
+            [class.selected]="(dropdown.selectedItem() === category) || (category === 'All Categories' && !dropdown.selectedItem())"
+            (click)="dropdown.select(category === 'All Categories' ? null : category)"
           >
             {{ category }}
           </li>
@@ -65,13 +61,11 @@
       </ul>
     </div>
   </div>
-
-  <!-- 3. BOTTOM SURVEY GRID (Η λίστα που αλλάζει βάσει του Dropdown & Tab) -->
   <div class="surveys-list">
     
     @for (survey of (currentTab() === 'active' ? filteredActiveSurveys() : filteredPastSurveys()); track survey.id) {
       <div
-        class="list-item"[class.disabled]="currentTab() === 'past'"
+        class="list-item" [class.disabled]="currentTab() === 'past'"
         [routerLink]="currentTab() === 'active' ? ['/surveyDetail', survey.id] : null"
       >
         <div class="list-info">
@@ -88,8 +82,6 @@
         </span>
       </div>
     }
-
-    <!-- Αν δεν υπάρχει καμία έρευνα στο επιλεγμένο φίλτρο/tab -->
     @if ((currentTab() === 'active' ? filteredActiveSurveys() : filteredPastSurveys()).length === 0) {
       <div style="padding: 2rem; color: #fff; opacity: 0.7;">
         No surveys found for this category.
