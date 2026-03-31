@@ -1,4 +1,9 @@
-<div class="app-layout"[class.theme-light]="isWhiteBg">
-<app-header></app-header>
-<router-outlet />
+<div class="app-layout" [class.theme-light]="isWhiteBg">
+  <app-header></app-header>
+  <router-outlet />
 </div>
+
+
+@if (modalService.isCreateSurveyOpen()) {
+  <app-create-survey></app-create-survey>
+}
