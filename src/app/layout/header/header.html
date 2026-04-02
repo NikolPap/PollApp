@@ -5,7 +5,7 @@
 
   @if (path == 'surveyDetail') {
     <img routerLink="/" src="/assets/images/purpleLogo.svg" alt="purple pollapp logo" style="cursor: pointer;" />
-    <button class="new-survey-btn" (click)="modalService.isCreateSurveyOpen.set(true)">
+    <button class="new-survey-btn create-btn" (click)="modalService.isCreateSurveyOpen.set(true)">
       Create survey
       <img src="/assets/images/add_circle_purple.svg" class="add-icon" alt="add icon" />
     </button>
