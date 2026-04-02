@@ -1,0 +1,144 @@
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .main-header {
+    padding: 16px;
+  }
+
+  .hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 60px;
+  }
+
+  .hero-content {
+    display: contents;
+  }
+
+  .hero-content h1 {
+    order: 1;
+    font-size: 3.875rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .hero-image {
+    order: 2; 
+    width: 100%;
+    justify-content: center;
+    margin: 10px 0 30px 0;
+
+    .animated-visual {
+      margin: 0;
+      max-width: 320px;
+    }
+  }
+
+  .hero-content p {
+    order: 3;
+    text-align: center;
+    font-size: 1.125rem;
+    margin-bottom: 30px;
+    padding: 0 10px;
+  }
+
+  .new-survey-btn {
+    order: 4;
+    width: auto;
+    padding: 14px 32px;
+    background-color: #ffb770;
+
+    .add-icon {
+      opacity: 1;
+      margin-left: 10px;
+      width: 20px;
+    }
+  }
+
+  .section-title {
+    font-size: 3.375rem;
+    margin-bottom: 40px;
+  }
+
+  .ending-title {
+    font-size: 1.5rem;
+  }
+
+  .badge-card {
+    align-self: self-start;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 15px;
+    padding-bottom: 10px;
+    margin-bottom: 40px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .card {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+    min-height: 200px;
+    padding: 30px 20px;
+  }
+
+  .card-title {
+    font-size: 1.4rem;
+  }
+
+  .filter-tabs {
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 30px;
+    align-items: baseline;
+
+  }
+
+  .dropdown-menu {
+    right: -55px;
+  }
+
+  .selected-text  {
+    left: 7px;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 5px 12px;
+  }
+
+  .dropdown-toggle {
+    font-size: 1rem;
+  }
+
+  .surveys-list {
+    grid-template-columns: 1fr;
+    max-height: none; 
+    overflow-y: visible;
+  }
+
+  .list-item {
+    height: auto;
+    min-height: 110px;
+    padding: 20px;
+  }
+
+  .list-title {
+    font-size: 1.15rem;
+    padding-bottom: 10px;
+  }
+}
+
