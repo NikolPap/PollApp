@@ -10,7 +10,12 @@
       <div class="survey-form-panel">
         <!-- Meta Section -->
         <div class="meta-section">
-          <span class="badge">Published</span>
+          <div class="meta-badge">
+            <span class="badge">Published</span>
+            <button class="badge-x-btn" routerLink="">
+              <img src=".\assets\images\x-btn.svg" alt="ein x button" />
+            </button>
+          </div>
 
           <div class="meta-details">
             <span class="end-date">Ends on {{ survey.end_date | date: 'dd.MM.yyyy' }}</span>
@@ -32,7 +37,6 @@
               </p>
               <div class="options-group">
                 @for (opt of q.options; track opt.letter) {
-                  <!-- Αφαιρέσαμε τα [class.disabled] και [disabled] -->
                   <label class="custom-checkbox-label">
                     <input
                       [type]="q.allow_multiple ? 'checkbox' : 'radio'"
@@ -53,9 +57,20 @@
 
         <!-- Footer -->
         <div class="form-footer">
-          <button class="complete-btn" routerLink="/">Complete survey</button>
+          <button class="complete-btn" routerLink="/">
+            Complete <span class="survey-word">survey</span>
+            <img class="complete-check-icon" src=".\assets\images\check.svg" alt="a check icon" />
+          </button>
         </div>
       </div>
+
+      <button>
+        <div class="toggle-texts">
+          <span>Close results</span
+          ><!--container-->
+        </div>
+        <span class="dropdown-arrow"></span>
+      </button>
 
       <!-- RIGHT PANEL: Live Results -->
       <div class="survey-results-panel">
