@@ -7,7 +7,7 @@
         <span class="badge draft">Draft</span>
         <h1 class="bubbly-text title">Create new survey</h1>
       </div>
-      <button class="cancel-btn" (click)="cancel()">Cancel <img src="/assets/images/close.svg" alt="close button"></button>
+      <button class="cancel-btn" (click)="cancel()">Cancel <img src="./assets/images/close.svg" alt="close button"></button>
     </div>
 
     <div class="form-card">
@@ -109,12 +109,12 @@
             @if (showValidationErrors() && getValidAnswersCount(q) < 2) { <div class="error-text">Please provide at least 2 answers.</div> }
 
             @if (q.answers.length < 6) {
-              <button class="add-text-btn" (click)="addAnswer(q.id)">Add answer <img src="/assets/images/add_circle.svg" alt="add circle icon"></button>
+              <button class="add-text-btn" (click)="addAnswer(q.id)">Add answer <img src="./assets/images/add_circle.svg" alt="add circle icon"></button>
             }
           </div>
         }
         <div class="question-block action-block">
-          <button class="add-question-btn" (click)="addQuestion()">Add next question <img src="/assets/images/add_circle.svg" alt="add circle icon"></button>
+          <button class="add-question-btn" (click)="addQuestion()">Add next question <img src="./assets/images/add_circle.svg" alt="add circle icon"></button>
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@
     <div class="footer-actions">
       <button class="new-survey-btn" (click)="publishSurvey()" [disabled]="isSubmitting()">
         {{ isSubmitting() ? 'Publishing...' : 'Publish' }}
-        <img src="/assets/images/check.svg" class="add-icon" alt="add icon" />
+        <img src="./assets/images/check.svg" class="add-icon" alt="add icon" />
       </button>
     </div>
     @if (showToast()) {

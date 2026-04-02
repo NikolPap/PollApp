@@ -45,6 +45,7 @@
   font-size: 0.95rem;
   color: #5d5662;
   font-weight: 500;
+  gap: 40px;
 }
 
 .survey-title {
@@ -262,28 +263,15 @@
   font-size: 0.95rem;
 }
 
-/* =========================================================
-   Media Queries
-   ========================================================= */
-@media (max-width: 1024px) {
-  .survey-layout {
-    flex-direction: column;
-    gap: 40px;
-  }
-
-  .survey-form-panel {
-    border-radius: 0 80px 0 0;
-    padding: 40px 30px;
-  }
+.badge-x-btn {
+  border: none;
+  width: 39px;
+  height: 32px;
+  display: none;
 }
 
-@media (max-width: 768px) {
-  .questions-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-
-  .survey-title {
-    font-size: 2.5rem;
-  }
+.complete-check-icon {
+  display: none;
 }
+
+

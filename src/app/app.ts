@@ -18,10 +18,16 @@ export class App {
   private router = inject(Router);
   modalService = inject(ModalService); 
 
-  constructor() {
+ constructor() {
+    // Listen to router events to detect navigation changes
     this.router.events.pipe(
+      // Filter specifically for the end of a navigation cycle
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
+      /**
+       * Check if the current URL contains 'surveyDetail'.
+       * If it does, set isWhiteBg to true to apply specific styling.
+       */
       this.isWhiteBg = event.urlAfterRedirects.includes('surveyDetail');
     });
   }

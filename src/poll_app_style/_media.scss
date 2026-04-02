@@ -140,5 +140,76 @@
     font-size: 1.15rem;
     padding-bottom: 10px;
   }
+
+  .create-btn {
+    display: none;
+  }
+
+.badge-x-btn{
+  display: block;
 }
 
+.meta-badge {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.survey-word {display: none;}
+
+ .survey-layout {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .survey-form-panel {
+    border-radius: 0 80px 0 0;
+    padding: 40px 19px;
+  }
+
+  .complete-btn {
+    background-color: #ffb770;
+  }
+
+  .questions-grid {
+    display: flex !important;
+    flex-direction: column;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .complete-check-icon {
+    display: block;
+  }
+
+  .complete-btn {
+    background-color: #ffb770;
+    display: flex;
+    gap: 8px;
+  }
+
+  .survey-layout {
+    padding-left: 10px;
+    padding-right: 10px;
+    align-items: normal;
+  }
+
+  .survey-description {
+    max-width: 100%;
+  }
+
+ .survey-results-panel {
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .questions-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .survey-title {
+    font-size: 2.5rem;
+  }
+}

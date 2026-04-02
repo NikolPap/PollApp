@@ -16,26 +16,35 @@ export class Header implements OnInit, OnDestroy {
     private routerSub: Subscription | undefined;
     modalService = inject(ModalService); // Προσθήκη
 
-    ngOnInit() {
-        this.updatePath(this.router.url);
-        this.routerSub = this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.updatePath(event.urlAfterRedirects);
-            }
-        });
-    }
+ ngOnInit() {
+    // Set initial path value based on the current URL upon component initialization
+    this.updatePath(this.router.url);
 
-    private updatePath(url: string) {
-        if (url === '/' || url === '') {
-            this.path = '';
-        } else if (url.includes('surveyDetail')) {
-            this.path = 'surveyDetail';
-        }
-    }
+    // Subscribe to router events to keep 'path' in sync with navigation changes
+    this.routerSub = this.router.events.subscribe((event) => {
+      // Only react when a navigation cycle successfully completes
+      if (event instanceof NavigationEnd) {
+        this.updatePath(event.urlAfterRedirects);
+      }
+    });
+  }
 
-    ngOnDestroy() {
-        if (this.routerSub) {
-            this.routerSub.unsubscribe();
-        }
+  /**
+   * Helper method to map the full URL to a specific path identifier
+   * @param url The current active URL string
+   */
+  private updatePath(url: string) {
+    if (url === '/' || url === '') {
+      this.path = '';
+    } else if (url.includes('surveyDetail')) {
+      this.path = 'surveyDetail';
     }
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe to prevent memory leaks when the component is destroyed
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+  }
 }

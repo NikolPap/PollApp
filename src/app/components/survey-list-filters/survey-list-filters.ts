@@ -15,11 +15,10 @@ import { SURVEY_CATEGORIES } from '../../models/survey.types';
 })
 export class SurveyListFilters implements OnInit {
 
-  dropdown = inject(DropdownService); 
+  dropdown = inject(DropdownService);
   categories = ['All Categories', ...SURVEY_CATEGORIES];
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
-
 
   surveys = signal<any[]>([]);
   activeSurveys = signal<any[]>([]);
@@ -27,73 +26,136 @@ export class SurveyListFilters implements OnInit {
   endingSoonSurveys = signal<any[]>([]);
 
   currentTab = signal<'active' | 'past'>('active');
-  filteredActiveSurveys = computed(() => {
-    const category = this.dropdown.selectedItem();
-    if (!category) return this.activeSurveys();
-    return this.activeSurveys().filter(s => s.category === category);
-  });
 
-  filteredPastSurveys = computed(() => {
-    const category = this.dropdown.selectedItem();
-    if (!category) return this.pastSurveys();
-    return this.pastSurveys().filter(s => s.category === category);
-  });
+  /**
+   * Filters active surveys based on selected category
+   */
+  filteredActiveSurveys = computed(() => 
+    this.filterByCategory(this.activeSurveys())
+  );
+
+  /**
+   * Filters past surveys based on selected category
+   */
+  filteredPastSurveys = computed(() => 
+    this.filterByCategory(this.pastSurveys())
+  );
 
   constructor(private supabaseService: SupabaseService) {}
 
+  /**
+   * Initializes survey loading
+   */
   async ngOnInit() {
     await this.loadSurveys();
   }
 
+  /**
+   * Fetches surveys and categorizes them
+   */
   async loadSurveys() {
     try {
       const data = await this.supabaseService.getSurveys();
       const now = new Date();
 
-      const active = data.filter(s =>
-        !s.end_date || new Date(s.end_date) >= now
-      );
-
-      const past = data.filter(s =>
-        s.end_date && new Date(s.end_date) < now
-      );
-
-      const threeDaysFromNow = new Date();
-      threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-
-      const endingSoon = active
-        .filter(s =>
-          s.end_date && new Date(s.end_date) <= threeDaysFromNow
-        )
-        .sort((a, b) =>
-          new Date(a.end_date).getTime() - new Date(b.end_date).getTime()
-        );
-
       this.surveys.set(data);
-      this.activeSurveys.set(active);
-      this.pastSurveys.set(past);
-      this.endingSoonSurveys.set(endingSoon);
+      this.activeSurveys.set(this.getActiveSurveys(data, now));
+      this.pastSurveys.set(this.getPastSurveys(data, now));
+      this.endingSoonSurveys.set(this.getEndingSoon(data, now));
 
     } catch (err) {
       console.error('LOAD ERROR:', err);
     }
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    if (this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target as Node)) {
-      this.dropdown.close();
-    }
+  /**
+   * Returns active surveys (not expired)
+   */
+  private getActiveSurveys(data: any[], now: Date) {
+    return data.filter(s =>
+      !s.end_date || new Date(s.end_date) >= now
+    );
   }
 
+  /**
+   * Returns past surveys (expired)
+   */
+  private getPastSurveys(data: any[], now: Date) {
+    return data.filter(s =>
+      s.end_date && new Date(s.end_date) < now
+    );
+  }
+
+  /**
+   * Returns surveys ending within 3 days
+   */
+  private getEndingSoon(data: any[], now: Date) {
+    const limit = this.getFutureDate(3);
+
+    return this.getActiveSurveys(data, now)
+      .filter(s =>
+        s.end_date && new Date(s.end_date) <= limit
+      )
+      .sort((a, b) =>
+        new Date(a.end_date).getTime() - new Date(b.end_date).getTime()
+      );
+  }
+
+  /**
+   * Returns a future date by adding days
+   */
+  private getFutureDate(days: number) {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
+  /**
+   * Filters surveys by selected category
+   */
+  private filterByCategory(surveys: any[]) {
+    const category = this.dropdown.selectedItem();
+
+    if (!category || category === 'All Categories') {
+      return surveys;
+    }
+
+    return surveys.filter(s => s.category === category);
+  }
+
+  /**
+   * Closes dropdown when clicking outside
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const clickedOutside =
+      this.sortDropdownRef &&
+      !this.sortDropdownRef.nativeElement.contains(event.target as Node);
+
+    if (clickedOutside) this.dropdown.close();
+  }
+
+  /**
+   * Calculates remaining days until survey ends
+   */
   getDaysLeft(endDate: string | null): string {
     if (!endDate) return 'No deadline';
 
-    const diffTime = new Date(endDate).getTime() - new Date().getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diff = this.calculateDaysDifference(endDate);
 
-    if (diffDays <= 0) return 'Ends today';
-    if (diffDays === 1) return 'Ends in 1 day';
-    return `Ends in ${diffDays} days`;
+    if (diff <= 0) return 'Ends today';
+    if (diff === 1) return 'Ends in 1 day';
+
+    return `Ends in ${diff} days`;
+  }
+
+  /**
+   * Calculates day difference between now and a date
+   */
+  private calculateDaysDifference(endDate: string) {
+    const diffTime =
+      new Date(endDate).getTime() - new Date().getTime();
+
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 }

@@ -1,13 +1,13 @@
 <header class="main-header">
   @if (path == '') {
-    <img src="/assets/images/orangeLogo.svg" alt="orange pollapp logo" />
+    <img src="./assets/images/orangeLogo.svg" alt="orange pollapp logo" />
   }
 
   @if (path == 'surveyDetail') {
-    <img routerLink="/" src="/assets/images/purpleLogo.svg" alt="purple pollapp logo" style="cursor: pointer;" />
+    <img routerLink="/" src="./assets/images/purpleLogo.svg" alt="purple pollapp logo" style="cursor: pointer;" />
     <button class="new-survey-btn create-btn" (click)="modalService.isCreateSurveyOpen.set(true)">
       Create survey
-      <img src="/assets/images/add_circle_purple.svg" class="add-icon" alt="add icon" />
+      <img src="./assets/images/add_circle_purple.svg" class="add-icon" alt="add icon" />
     </button>
   }
 </header>
