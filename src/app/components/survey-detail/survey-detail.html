@@ -64,16 +64,13 @@
         </div>
       </div>
 
-      <button>
-        <div class="toggle-texts">
-          <span>Close results</span
-          ><!--container-->
-        </div>
-        <span class="dropdown-arrow"></span>
+      <button class="close-results-btn" (click)="toggleMobileResults()">
+        <span>{{ showMobileResults() ? 'Close results' : 'See results' }}</span>
+        <span class="results-arrow" [class.is-closed]="!showMobileResults()"></span>
       </button>
 
       <!-- RIGHT PANEL: Live Results -->
-      <div class="survey-results-panel">
+      <div class="survey-results-panel" [class.hidden-on-mobile]="!showMobileResults()">
         <h2 class="results-main-title">
           Survey results <span class="bubbly-text live">LIVE</span>
         </h2>
