@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ModalService } from '../../services/modal.service'; // Προσθήκη
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-header',
@@ -11,12 +11,12 @@ import { ModalService } from '../../services/modal.service'; // Προσθήκη
   styleUrl: './header.scss',
 })
 export class Header implements OnInit, OnDestroy {
-    path = '';
-    private router = inject(Router);
-    private routerSub: Subscription | undefined;
-    modalService = inject(ModalService); // Προσθήκη
+  path = '';
+  private router = inject(Router);
+  private routerSub: Subscription | undefined;
+  modalService = inject(ModalService); // Προσθήκη
 
- ngOnInit() {
+  ngOnInit() {
     // Set initial path value based on the current URL upon component initialization
     this.updatePath(this.router.url);
 
