@@ -14,9 +14,10 @@ import { Question, Answer, SURVEY_CATEGORIES } from '../../models/survey.types';
   providers: [DropdownService],
 })
 export class CreateSurvey {
-  private supabaseService = inject(SupabaseService);
-  modalService = inject(ModalService);
-  dropdown = inject(DropdownService);
+  private readonly supabaseService = inject(SupabaseService);
+  readonly modalService = inject(ModalService);
+  readonly dropdown = inject(DropdownService);
+
   categories = SURVEY_CATEGORIES;
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
@@ -36,13 +37,8 @@ export class CreateSurvey {
 
   questions = signal<Question[]>([
     {
-      id: 1,
-      text: '',
-      allowMultiple: false,
-      answers: [
-        { id: 1, text: '' },
-        { id: 2, text: '' },
-      ],
+      id: 1, text: '', allowMultiple: false,
+      answers: [{ id: 1, text: '' }, { id: 2, text: '' }],
     },
   ]);
 
