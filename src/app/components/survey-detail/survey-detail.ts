@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef , signal} from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
-import { DatePipe } from '@angular/common';
+import { DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-survey-detail',
@@ -11,14 +11,20 @@ import { DatePipe } from '@angular/common';
   styleUrl: './survey-detail.scss',
 })
 export class SurveyDetail implements OnInit, OnDestroy {
+
   survey: any = null;
   isLoading = true;
   realtimeChannel: any;
+  showMobileResults = signal<boolean>(true);
+
+  toggleMobileResults() {
+  this.showMobileResults.update(val => !val);
+  }
 
   constructor(
-    private route: ActivatedRoute,
-    private supabase: SupabaseService,
-    private cdr: ChangeDetectorRef
+    private readonly route: ActivatedRoute,
+    private readonly supabase: SupabaseService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   /**
@@ -57,7 +63,6 @@ export class SurveyDetail implements OnInit, OnDestroy {
 
       this.survey = this.prepareSurvey(data);
       this.calculatePercentages();
-
     } catch (err) {
       console.error('LOAD ERROR:', err);
     }
@@ -72,7 +77,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
     const questions = (data.questions || []).map((q: any) => ({
       ...q,
       options: this.prepareOptions(q.options),
-      hasVoted: false
+      hasVoted: false,
     }));
 
     return { ...data, questions };
@@ -82,14 +87,12 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Parses and enriches options with UI state
    */
   private prepareOptions(options: any) {
-    const parsed = typeof options === 'string'
-      ? JSON.parse(options)
-      : options;
+    const parsed = typeof options === 'string' ? JSON.parse(options) : options;
 
     return parsed.map((opt: any) => ({
       ...opt,
       selected: false,
-      locked: false
+      locked: false,
     }));
   }
 
@@ -111,7 +114,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
       const total = this.getTotalVotes(q.options);
 
       if (total === 0) {
-        q.options.forEach((opt: any) => opt.percentage = 0);
+        q.options.forEach((opt: any) => (opt.percentage = 0));
         return;
       }
 
@@ -123,10 +126,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Sums total votes for a question
    */
   private getTotalVotes(options: any[]) {
-    return options.reduce(
-      (sum: number, opt: any) => sum + Number(opt.votes || 0),
-      0
-    );
+    return options.reduce((sum: number, opt: any) => sum + Number(opt.votes || 0), 0);
   }
 
   /**
@@ -135,7 +135,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
   private assignPercentages(options: any[], total: number) {
     let sumFloored = 0;
 
-    const stats = options.map(opt => {
+    const stats = options.map((opt) => {
       const exact = (Number(opt.votes || 0) / total) * 100;
       const floored = Math.floor(exact);
 
@@ -154,9 +154,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
     stats.sort((a, b) => b.remainder - a.remainder);
 
     stats.forEach((stat, i) => {
-      stat.opt.percentage = i < missing
-        ? stat.floored + 1
-        : stat.floored;
+      stat.opt.percentage = i < missing ? stat.floored + 1 : stat.floored;
     });
   }
 
@@ -164,9 +162,8 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Subscribes to realtime survey updates
    */
   setupRealtime(surveyId: string) {
-    this.realtimeChannel = this.supabase.listenToSurveyResults(
-      surveyId,
-      payload => this.handleRealtimeUpdate(payload)
+    this.realtimeChannel = this.supabase.listenToSurveyResults(surveyId, (payload) =>
+      this.handleRealtimeUpdate(payload),
     );
   }
 
@@ -195,22 +192,19 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Updates options while preserving UI state
    */
   private updateQuestionOptions(index: number, options: any) {
-    const newOptions = typeof options === 'string'
-      ? JSON.parse(options)
-      : options;
+    const newOptions = typeof options === 'string' ? JSON.parse(options) : options;
 
     const current = this.survey.questions[index].options;
 
-    this.survey.questions[index].options =
-      newOptions.map((opt: any) => {
-        const old = current.find((o: any) => o.letter === opt.letter);
+    this.survey.questions[index].options = newOptions.map((opt: any) => {
+      const old = current.find((o: any) => o.letter === opt.letter);
 
-        return {
-          ...opt,
-          selected: old?.selected || false,
-          locked: old?.locked || false
-        };
-      });
+      return {
+        ...opt,
+        selected: old?.selected || false,
+        locked: old?.locked || false,
+      };
+    });
   }
 
   /**
@@ -258,11 +252,9 @@ export class SurveyDetail implements OnInit, OnDestroy {
     const options = q.options.map((opt: any) => {
       const votes = Number(opt.votes || 0);
 
-      if (opt.letter === letter)
-        return { ...opt, selected: true, votes: votes + 1 };
+      if (opt.letter === letter) return { ...opt, selected: true, votes: votes + 1 };
 
-      if (opt.selected)
-        return { ...opt, selected: false, votes: Math.max(0, votes - 1) };
+      if (opt.selected) return { ...opt, selected: false, votes: Math.max(0, votes - 1) };
 
       return opt;
     });
@@ -282,7 +274,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
       return {
         ...opt,
         selected: checked,
-        votes: checked ? votes + 1 : Math.max(0, votes - 1)
+        votes: checked ? votes + 1 : Math.max(0, votes - 1),
       };
     });
 
@@ -311,9 +303,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Finds previously selected option (single choice)
    */
   private findPreviousSelection(question: any, letter: string) {
-    return question.options.find(
-      (opt: any) => opt.selected && opt.letter !== letter
-    );
+    return question.options.find((opt: any) => opt.selected && opt.letter !== letter);
   }
 
   /**
