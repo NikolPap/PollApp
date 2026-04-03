@@ -172,8 +172,8 @@ header {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 1380px;
-  max-height: 450px;   
-  overflow-y: auto;    
+  max-height: 450px;
+  overflow-y: auto;
 }
 
 .surveys-list::-webkit-scrollbar {
@@ -193,8 +193,8 @@ header {
   background-color: #d9d9d914;
   border-radius: 0 50px 0 0;
   padding: 15px 30px;
-  height: 127px;              
-  box-sizing: border-box;     
+  height: 127px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -276,8 +276,8 @@ header {
   width: 14px;
   height: 14px;
   background-color: #ffffff;
-  mask-image: url('/assets/images/arrow_drop_down.svg');
-  -webkit-mask-image: url('/assets/images/arrow_drop_down.svg');
+  mask-image: url('../../assets/images/arrow_drop_down.svg');
+  -webkit-mask-image: url('../../assets/images/arrow_drop_down.svg');
   mask-size: contain;
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
@@ -384,6 +384,6 @@ header {
 .list-item.disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  pointer-events: none; 
+  pointer-events: none;
 }
 

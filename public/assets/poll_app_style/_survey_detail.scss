@@ -274,4 +274,44 @@
   display: none;
 }
 
+.close-results-btn {
+  display: none; /* Κρυμμένο σε desktop από default */
+  background: transparent;
+  border: none;
+  color: #35273a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  transition: all 0.3s ease;
+  margin-top: 40px;
+
+  .results-arrow {
+      display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-color: #35273a; 
+    mask-image: url('../../assets/images/arrow_drop_down.svg');
+    -webkit-mask-image: url('../../assets/images/arrow_drop_down.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    transition: transform 0.4s ease-in-out, background-color 0.3s ease;
+    transform: rotate(-180deg); 
+  }
+
+
+    .results-arrow.is-closed {
+    transform: rotate(0deg);
+  }
+
+  &:hover .results-arrow {
+    background-color: var(--primary-color);
+  }
+}
 

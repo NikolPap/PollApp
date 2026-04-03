@@ -30,10 +30,10 @@ $badge-bg: #ffdfbe;
   margin: auto;
   color: $text-light;
   position: relative;
-  max-height: 85vh;         
-  display: flex;         
+  max-height: 85vh;
+  display: flex;
   flex-direction: column;
-  overflow: hidden;      
+  overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
@@ -61,7 +61,6 @@ $badge-bg: #ffdfbe;
 }
 
 .cancel-btn {
-  width: 110px;
   align-self: end;
   background-color: $btn-brown;
   color: $text-light;
@@ -86,25 +85,25 @@ $badge-bg: #ffdfbe;
   border-radius: 20px;
   padding: 30px 40px;
   margin-bottom: 10px;
-  flex-grow: 1;     
-  overflow-y: auto;  
-  padding-right: 20px; 
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 20px;
 
   &::-webkit-scrollbar {
     width: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05); 
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: $primary-orange; 
+    background-color: $primary-orange;
     border-radius: 10px;
 
     &:hover {
-      background-color: darken(#ffb770, 10%); 
+      background-color: darken(#ffb770, 10%);
     }
   }
   scrollbar-width: thin;
@@ -211,7 +210,7 @@ $badge-bg: #ffdfbe;
 .trash-icon {
   width: 20px;
   height: 20px;
-  background-image: url('/assets/images/trash.svg');
+  background-image: url('../../assets/images/trash.svg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -219,7 +218,7 @@ $badge-bg: #ffdfbe;
 
   &:hover {
     opacity: 1;
-    background-image: url('/assets/images/trashHover.svg');
+    background-image: url('../../assets/images/trashHover.svg');
   }
 }
 
@@ -357,7 +356,7 @@ $badge-bg: #ffdfbe;
   font-size: 0.85rem;
   color: #d8d4db;
   position: relative;
-  input { 
+  input {
     position: absolute;
     opacity: 0;
     cursor: pointer;

@@ -27,7 +27,7 @@
   }
 
   .hero-image {
-    order: 2; 
+    order: 2;
     width: 100%;
     justify-content: center;
     margin: 10px 0 30px 0;
@@ -104,14 +104,13 @@
     gap: 40px;
     margin-bottom: 30px;
     align-items: baseline;
-
   }
 
   .dropdown-menu {
     right: -55px;
   }
 
-  .selected-text  {
+  .selected-text {
     left: 7px;
   }
 
@@ -126,7 +125,7 @@
 
   .surveys-list {
     grid-template-columns: 1fr;
-    max-height: none; 
+    max-height: none;
     overflow-y: visible;
   }
 
@@ -145,21 +144,23 @@
     display: none;
   }
 
-.badge-x-btn{
-  display: block;
-}
+  .badge-x-btn {
+    display: block;
+  }
 
-.meta-badge {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
+  .meta-badge {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
 
-.survey-word {display: none;}
+  .survey-word {
+    display: none;
+  }
 
- .survey-layout {
+  .survey-layout {
     flex-direction: column;
-    gap: 40px;
+    gap: 0;
   }
 
   .survey-form-panel {
@@ -198,8 +199,158 @@
     max-width: 100%;
   }
 
- .survey-results-panel {
+  .survey-results-panel {
     padding: 0;
+  }
+
+  .close-results-btn {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .survey-results-panel.hidden-on-mobile {
+    display: none;
+  }
+
+  .results-main-title {
+    margin-top: 0;
+  }
+
+  .survey-results-panel {
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .modal-backdrop {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 20px 15px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .create-survey-container {
+    margin: 0 auto;
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    padding: 25px 20px;
+    border-radius: 20px 60px 20px 20px;
+  }
+
+  .form-card {
+    overflow-y: visible;
+    max-height: none;
+    padding: 20px 15px;
+  }
+
+  .input-with-icon {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .custom-input {
+    width: 100%;
+  }
+
+  .answer-row {
+    align-items: flex-end;
+  }
+
+  .answer-row .answer-letter {
+    margin-bottom: 11px;
+  }
+
+  .form-row,
+  .split-group {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .custom-input.short-input {
+    max-width: 100%;
+  }
+
+  .questions-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px !important;
+    padding-top: 20px !important;
+  }
+
+  .action-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+  }
+
+  .add-question-btn {
+    width: auto;
+  }
+
+  .bubbly-text.title {
+    font-size: 2.2rem;
+  }
+
+  .header-section {
+    margin-bottom: 20px;
+  }
+
+  .footer-actions {
+    justify-content: center;
+    padding-top: 20px;
+  }
+
+  .dropdown-toggle {
+    display: none;
+  }
+
+  .cancel-text {
+    display: none;
+  }
+
+  .input-with-icon.align-top {
+    align-items: flex-end;
+  }
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-group > .input-with-icon {
+    display: block;
+    width: 100%;
+  }
+
+  .form-group > .input-with-icon > .trash-icon {
+    position: absolute;
+    top: -4px;
+    right: 0;
+  }
+  .answer-row .input-with-icon {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .answer-row {
+    align-items: flex-end;
+  }
+
+  .answer-row .answer-letter {
+    margin-bottom: 11px;
+  }
+
+  .custom-input {
+    width: 100%;
+  }
+
+  .cancel-btn {
+    margin-bottom: auto;
   }
 }
 
