@@ -15,34 +15,52 @@ import { SurveyFilterService } from '../../services/survey-filter.service';
   providers: [DropdownService] 
 })
 export class SurveyListFilters implements OnInit {
+  // Dependencies
   private readonly supabaseService = inject(SupabaseService);
-  private readonly surveyFilterService = inject(SurveyFilterService); // Inject της λογικής
+  private readonly surveyFilterService = inject(SurveyFilterService);
   readonly dropdown = inject(DropdownService);
 
+  // Configuration Constants
   categories = ['All Categories', ...SURVEY_CATEGORIES];
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
 
+  // State Management (Signals)
   surveys = signal<any[]>([]);
   activeSurveys = signal<any[]>([]);
   pastSurveys = signal<any[]>([]);
   endingSoonSurveys = signal<any[]>([]);
-
   currentTab = signal<'active' | 'past'>('active');
 
+  /**
+   * Computed signal that filters active surveys based on the selected category.
+   */
   filteredActiveSurveys = computed(() => this.filterByCategory(this.activeSurveys()));
+
+  /**
+   * Computed signal that filters past surveys based on the selected category.
+   */
   filteredPastSurveys = computed(() => this.filterByCategory(this.pastSurveys()));
 
-  async ngOnInit() {
+  /**
+   * Initialization: Loads survey data on component start.
+   */
+  async ngOnInit(): Promise<void> {
     await this.loadSurveys();
   }
 
-  async loadSurveys() {
+  /**
+   * Fetches surveys from the database and categorizes them into 
+   * active, past, and ending soon lists.
+   */
+  async loadSurveys(): Promise<void> {
     try {
       const data = await this.supabaseService.getSurveys();
       const now = new Date();
 
       this.surveys.set(data);
+      
+      // Utilize SurveyFilterService for data segregation logic
       this.activeSurveys.set(this.surveyFilterService.getActiveSurveys(data, now));
       this.pastSurveys.set(this.surveyFilterService.getPastSurveys(data, now));
       this.endingSoonSurveys.set(this.surveyFilterService.getEndingSoon(data, now));
@@ -52,14 +70,20 @@ export class SurveyListFilters implements OnInit {
     }
   }
 
-  private filterByCategory(surveys: any[]) {
+  /**
+   * Filters a given survey array based on the current dropdown category selection.
+   */
+  private filterByCategory(surveys: any[]): any[] {
     const category = this.dropdown.selectedItem();
     if (!category || category === 'All Categories') return surveys;
     return surveys.filter(s => s.category === category);
   }
 
+  /**
+   * Closes the sort dropdown if a click is detected outside of the element.
+   */
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
+  onDocumentClick(event: Event): void {
     const clickedOutside =
       this.sortDropdownRef &&
       !this.sortDropdownRef.nativeElement.contains(event.target as Node);
@@ -67,6 +91,9 @@ export class SurveyListFilters implements OnInit {
     if (clickedOutside) this.dropdown.close();
   }
 
+  /**
+   * Calculates the remaining days for a survey until its end date.
+   */
   getDaysLeft(endDate: string | null): string {
     return this.surveyFilterService.getDaysLeft(endDate);
   }

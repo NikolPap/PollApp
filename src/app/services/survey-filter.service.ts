@@ -5,31 +5,55 @@ import { Injectable } from '@angular/core';
 })
 export class SurveyFilterService {
 
-  getActiveSurveys(data: any[], now: Date) {
+  /**
+   * Filters a list of surveys to return only those that are currently active.
+   * A survey is active if it has no end date or if the end date is in the future.
+   * @param data - The array of survey objects.
+   * @param now - The current reference date.
+   */
+  getActiveSurveys(data: any[], now: Date): any[] {
     return data.filter(s => !s.end_date || new Date(s.end_date) >= now);
   }
 
-  getPastSurveys(data: any[], now: Date) {
+  /**
+   * Filters a list of surveys to return only those that have already expired.
+   * @param data - The array of survey objects.
+   * @param now - The current reference date.
+   */
+  getPastSurveys(data: any[], now: Date): any[] {
     return data.filter(s => s.end_date && new Date(s.end_date) < now);
   }
 
-  getEndingSoon(data: any[], now: Date) {
-    const date = new Date();
-    date.setDate(date.getDate() + 3); // 3 days future limit
-    const limit = date;
+  /**
+   * Identifies active surveys that are set to expire within the next 3 days.
+   * Results are sorted by expiration date (closest first).
+   * @param data - The array of survey objects.
+   * @param now - The current reference date.
+   */
+  getEndingSoon(data: any[], now: Date): any[] {
+    const dateLimit = new Date();
+    dateLimit.setDate(dateLimit.getDate() + 3);
 
     return this.getActiveSurveys(data, now)
-      .filter(s => s.end_date && new Date(s.end_date) <= limit)
+      .filter(s => s.end_date && new Date(s.end_date) <= dateLimit)
       .sort((a, b) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime());
   }
 
+  /**
+   * Calculates the human-readable string representing the time remaining 
+   * until a survey's deadline.
+   * @param endDate - The ISO date string or null.
+   * @returns A formatted string (e.g., "Ends in 2 days", "Ends today").
+   */
   getDaysLeft(endDate: string | null): string {
     if (!endDate) return 'No deadline';
+    
     const diffTime = new Date(endDate).getTime() - new Date().getTime();
-    const diff = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diff <= 0) return 'Ends today';
-    if (diff === 1) return 'Ends in 1 day';
-    return `Ends in ${diff} days`;
+    if (diffDays <= 0) return 'Ends today';
+    if (diffDays === 1) return 'Ends in 1 day';
+    
+    return `Ends in ${diffDays} days`;
   }
 }

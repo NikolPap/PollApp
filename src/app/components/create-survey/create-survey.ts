@@ -37,34 +37,59 @@ export class CreateSurvey {
 
   questions = signal<Question[]>([
     {
-      id: 1, text: '', allowMultiple: false,
-      answers: [{ id: 1, text: '' }, { id: 2, text: '' }],
+      id: 1,
+      text: '',
+      allowMultiple: false,
+      answers: [
+        { id: 1, text: '' },
+        { id: 2, text: '' },
+      ],
     },
   ]);
 
-  cancel() {
+  /**
+   * Closes the create survey modal.
+   */
+  cancel(): void {
     this.modalService.isCreateSurveyOpen.set(false);
   }
 
-  clearTitle() {
+  /**
+   * Clears the survey title input field.
+   */
+  clearTitle(): void {
     this.surveyTitle = '';
   }
 
-  clearDate() {
+  /**
+   * Clears the survey end date.
+   */
+  clearDate(): void {
     this.surveyEndDate = '';
   }
 
-  clearDescription() {
+  /**
+   * Clears the survey description field.
+   */
+  clearDescription(): void {
     this.surveyDescription = '';
   }
 
-  toggleAllowMultiple(questionId: number, newValue: boolean) {
+  /**
+   * Toggles whether a question allows multiple answers.
+   */
+  toggleAllowMultiple(questionId: number, newValue: boolean): void {
     this.questions.update((qs) =>
-      qs.map((q) => (q.id === questionId ? { ...q, allowMultiple: newValue } : q)),
+      qs.map((q) =>
+        q.id === questionId ? { ...q, allowMultiple: newValue } : q
+      ),
     );
   }
 
-  addQuestion() {
+  /**
+   * Adds a new empty question with two default answers.
+   */
+  addQuestion(): void {
     const newQuestion: Question = {
       id: this.nextQuestionId++,
       text: '',
@@ -74,14 +99,21 @@ export class CreateSurvey {
         { id: this.nextAnswerId++, text: '' },
       ],
     };
+
     this.questions.update((qs) => [...qs, newQuestion]);
   }
 
-  removeQuestion(id: number) {
+  /**
+   * Removes a question by its ID.
+   */
+  removeQuestion(id: number): void {
     this.questions.update((qs) => qs.filter((q) => q.id !== id));
   }
 
-  addAnswer(questionId: number) {
+  /**
+   * Adds a new answer to a specific question (max 6).
+   */
+  addAnswer(questionId: number): void {
     this.questions.update((qs) =>
       qs.map((q) =>
         q.id === questionId && q.answers.length < 6
@@ -91,34 +123,56 @@ export class CreateSurvey {
     );
   }
 
-  removeAnswer(questionId: number, answerId: number) {
+  /**
+   * Removes an answer from a specific question.
+   */
+  removeAnswer(questionId: number, answerId: number): void {
     this.questions.update((qs) =>
       qs.map((q) =>
-        q.id === questionId ? { ...q, answers: q.answers.filter((a) => a.id !== answerId) } : q,
+        q.id === questionId
+          ? { ...q, answers: q.answers.filter((a) => a.id !== answerId) }
+          : q,
       ),
     );
   }
 
+  /**
+   * Creates a new empty answer with unique ID.
+   */
   private createEmptyAnswer(): Answer {
     return { id: this.nextAnswerId++, text: '' };
   }
 
+  /**
+   * Returns A, B, C... based on index.
+   */
   getAnswerLetter(index: number): string {
     return String.fromCharCode(65 + index);
   }
 
+  /**
+   * Counts valid (non-empty) answers in a question.
+   */
   getValidAnswersCount(question: Question): number {
     return question.answers.filter((a) => a.text.trim() !== '').length;
   }
 
+  /**
+   * Closes dropdown when clicking outside.
+   */
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
+  onDocumentClick(event: Event): void {
     const clickedOutside =
-      this.sortDropdownRef && !this.sortDropdownRef.nativeElement.contains(event.target as Node);
+      this.sortDropdownRef &&
+      !this.sortDropdownRef.nativeElement.contains(event.target as Node);
+
     if (clickedOutside) this.dropdown.close();
   }
 
-  async publishSurvey() {
+  /**
+   * Validates and submits the survey.
+   */
+  async publishSurvey(): Promise<void> {
     this.showValidationErrors.set(true);
 
     const validation = this.validateSurvey();
@@ -127,7 +181,10 @@ export class CreateSurvey {
     this.isSubmitting.set(true);
 
     try {
-      await this.supabaseService.createSurvey(this.buildSurveyData(), validation.questions);
+      await this.supabaseService.createSurvey(
+        this.buildSurveyData(),
+        validation.questions
+      );
       this.showSuccessToast();
     } catch (error: any) {
       this.handleError(error);
@@ -136,10 +193,12 @@ export class CreateSurvey {
     }
   }
 
-  private validateSurvey() {
+  /**
+   * Validates survey fields and questions.
+   */
+  private validateSurvey(): { isValid: boolean; questions: any[] } {
     let hasErrors = false;
 
-    // ΑΦΑΙΡΕΘΗΚΕ ο έλεγχος για το category! Ελέγχει μόνο το Title τώρα.
     if (!this.surveyTitle.trim()) {
       hasErrors = true;
     }
@@ -150,28 +209,39 @@ export class CreateSurvey {
     return { isValid: !hasErrors, questions };
   }
 
-  private formatQuestions() {
+  /**
+   * Formats valid questions for submission.
+   */
+  private formatQuestions(): any[] {
     const formatted: any[] = [];
+
     for (const q of this.questions()) {
       const validAnswers = q.answers.filter((a) => a.text.trim() !== '');
+
       if (!q.text.trim() || validAnswers.length < 2) continue;
+
       formatted.push({
         text: q.text,
         allowMultiple: q.allowMultiple,
         answers: validAnswers,
       });
     }
+
     return formatted;
   }
 
-  private buildSurveyData() {
+  /**
+   * Builds payload for API.
+   */
+  private buildSurveyData(): any {
     const payload: any = {
       title: this.surveyTitle,
       description: this.surveyDescription,
-      end_date: this.surveyEndDate ? new Date(this.surveyEndDate).toISOString() : null,
+      end_date: this.surveyEndDate
+        ? new Date(this.surveyEndDate).toISOString()
+        : null,
     };
 
-    // Αν έχει επιλεγεί category το βάζουμε στο payload, αλλιώς δεν το στέλνουμε καθόλου!
     if (this.dropdown.selectedItem()) {
       payload.category = this.dropdown.selectedItem();
     }
@@ -179,20 +249,31 @@ export class CreateSurvey {
     return payload;
   }
 
-  private showSuccessToast() {
+  /**
+   * Shows success toast and auto closes.
+   */
+  private showSuccessToast(): void {
     this.showToast.set(true);
+
     this.toastTimeout = setTimeout(() => {
       this.closeToastAndReload();
     }, 5000);
   }
 
-  private handleError(error: any) {
+  /**
+   * Handles submission errors.
+   */
+  private handleError(error: any): void {
     console.error('Database Error:', error);
     alert('Error publishing survey: ' + error.message);
   }
 
-  closeToastAndReload() {
+  /**
+   * Closes toast, modal and reloads page.
+   */
+  closeToastAndReload(): void {
     if (this.toastTimeout) clearTimeout(this.toastTimeout);
+
     this.showToast.set(false);
     this.modalService.isCreateSurveyOpen.set(false);
     window.location.reload();
