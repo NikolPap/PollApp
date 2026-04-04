@@ -3,8 +3,8 @@ import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
 import { DatePipe } from '@angular/common';
 import { DropdownService } from '../../services/dropdown.service';
-import { SURVEY_CATEGORIES } from '../../models/survey.types';
-import { SurveyFilterService } from '../../services/survey-filter.service'; 
+import { SURVEY_CATEGORIES, Survey } from '../../models/survey.types';
+import { SurveyFilterService } from '../../services/survey-filter.service';
 
 @Component({
   selector: 'app-survey-list-filters',
@@ -12,7 +12,7 @@ import { SurveyFilterService } from '../../services/survey-filter.service';
   imports: [RouterLink, DatePipe],
   templateUrl: './survey-list-filters.html',
   styleUrl: './survey-list-filters.scss',
-  providers: [DropdownService] 
+  providers: [DropdownService]
 })
 export class SurveyListFilters implements OnInit {
   // Dependencies
@@ -25,22 +25,27 @@ export class SurveyListFilters implements OnInit {
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
 
-  // State Management (Signals)
-  surveys = signal<any[]>([]);
-  activeSurveys = signal<any[]>([]);
-  pastSurveys = signal<any[]>([]);
-  endingSoonSurveys = signal<any[]>([]);
+  // State (typed properly)
+  surveys = signal<Survey[]>([]);
+  activeSurveys = signal<Survey[]>([]);
+  pastSurveys = signal<Survey[]>([]);
+  endingSoonSurveys = signal<Survey[]>([]);
+
   currentTab = signal<'active' | 'past'>('active');
 
   /**
    * Computed signal that filters active surveys based on the selected category.
    */
-  filteredActiveSurveys = computed(() => this.filterByCategory(this.activeSurveys()));
+  filteredActiveSurveys = computed(() =>
+    this.filterByCategory(this.activeSurveys())
+  );
 
   /**
    * Computed signal that filters past surveys based on the selected category.
    */
-  filteredPastSurveys = computed(() => this.filterByCategory(this.pastSurveys()));
+  filteredPastSurveys = computed(() =>
+    this.filterByCategory(this.pastSurveys())
+  );
 
   /**
    * Initialization: Loads survey data on component start.
@@ -59,11 +64,18 @@ export class SurveyListFilters implements OnInit {
       const now = new Date();
 
       this.surveys.set(data);
-      
-      // Utilize SurveyFilterService for data segregation logic
-      this.activeSurveys.set(this.surveyFilterService.getActiveSurveys(data, now));
-      this.pastSurveys.set(this.surveyFilterService.getPastSurveys(data, now));
-      this.endingSoonSurveys.set(this.surveyFilterService.getEndingSoon(data, now));
+
+      this.activeSurveys.set(
+        this.surveyFilterService.getActiveSurveys(data, now)
+      );
+
+      this.pastSurveys.set(
+        this.surveyFilterService.getPastSurveys(data, now)
+      );
+
+      this.endingSoonSurveys.set(
+        this.surveyFilterService.getEndingSoon(data, now)
+      );
 
     } catch (err) {
       console.error('LOAD ERROR:', err);
@@ -73,9 +85,13 @@ export class SurveyListFilters implements OnInit {
   /**
    * Filters a given survey array based on the current dropdown category selection.
    */
-  private filterByCategory(surveys: any[]): any[] {
+  private filterByCategory(surveys: Survey[]): Survey[] {
     const category = this.dropdown.selectedItem();
-    if (!category || category === 'All Categories') return surveys;
+
+    if (!category || category === 'All Categories') {
+      return surveys;
+    }
+
     return surveys.filter(s => s.category === category);
   }
 
