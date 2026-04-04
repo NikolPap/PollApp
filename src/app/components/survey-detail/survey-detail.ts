@@ -3,7 +3,8 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
 import { DatePipe } from '@angular/common';
 import { SurveyLogicService } from '../../services/survey-logic.service';
-
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { Survey, SurveyQuestion, SurveyOption, RealtimePayload } from '../../models/survey.types';
 
 @Component({
   selector: 'app-survey-detail',
@@ -19,19 +20,19 @@ export class SurveyDetail implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly surveyLogic = inject(SurveyLogicService);
 
-  survey: any = null;
+  survey: Survey | null = null;
   isLoading = true;
-  realtimeChannel: any;
+  realtimeChannel: RealtimeChannel | undefined;
   showMobileResults = signal<boolean>(true);
 
-  /**
+ /**
    * Toggles the mobile results view state.
    */
   toggleMobileResults(): void {
     this.showMobileResults.update(val => !val);
   }
 
-  /**
+ /**
    * Initialization: Fetches survey ID from route and sets up data/listeners.
    */
   async ngOnInit(): Promise<void> {
@@ -44,7 +45,7 @@ export class SurveyDetail implements OnInit, OnDestroy {
     this.setupRealtime(id);
   }
 
-  /**
+ /**
    * Cleanup: Unsubscribes from Supabase realtime channels.
    */
   ngOnDestroy(): void {
@@ -63,7 +64,9 @@ export class SurveyDetail implements OnInit, OnDestroy {
       if (!data) return;
 
       this.survey = this.prepareSurvey(data);
-      this.surveyLogic.calculatePercentages(this.survey.questions);
+      if (this.survey.questions) {
+        this.surveyLogic.calculatePercentages(this.survey.questions);
+      }
     } catch (err) {
       console.error('LOAD ERROR:', err);
     }
@@ -74,8 +77,8 @@ export class SurveyDetail implements OnInit, OnDestroy {
   /**
    * Prepares survey data structure and injects UI-specific flags.
    */
-  private prepareSurvey(data: any): any {
-    const questions = (data.questions || []).map((q: any) => ({
+  private prepareSurvey(data: Survey): Survey {
+    const questions = (data.questions || []).map((q) => ({
       ...q,
       options: this.prepareOptions(q.options),
       hasVoted: false,
@@ -86,12 +89,16 @@ export class SurveyDetail implements OnInit, OnDestroy {
   /**
    * Parses options and initializes selection/lock states.
    */
-  private prepareOptions(options: any): any[] {
-    const parsed = typeof options === 'string' ? JSON.parse(options) : options;
-    return parsed.map((opt: any) => ({ 
-      ...opt, 
-      selected: false, 
-      locked: false 
+  private prepareOptions(options: unknown): SurveyOption[] {
+    const parsed =
+      typeof options === 'string'
+        ? (JSON.parse(options) as SurveyOption[])
+        : (options as SurveyOption[]);
+
+    return parsed.map((opt) => ({
+      ...opt,
+      selected: false,
+      locked: false,
     }));
   }
 
@@ -99,17 +106,20 @@ export class SurveyDetail implements OnInit, OnDestroy {
    * Subscribes to realtime updates for a specific survey.
    */
   setupRealtime(surveyId: string): void {
-    this.realtimeChannel = this.supabase.listenToSurveyResults(surveyId, (payload) =>
-      this.handleRealtimeUpdate(payload),
+    this.realtimeChannel = this.supabase.listenToSurveyResults(
+      surveyId,
+      (payload: RealtimePayload) => this.handleRealtimeUpdate(payload),
     );
   }
 
   /**
    * Handles incoming realtime data updates and refreshes the UI.
    */
-  private handleRealtimeUpdate(payload: any): void {
+  private handleRealtimeUpdate(payload: RealtimePayload): void {
+    if (!this.survey || !this.survey.questions) return;
+
     const updated = payload.new;
-    const index = this.survey.questions.findIndex((q: any) => q.id === updated.id);
+    const index = this.survey.questions.findIndex((q) => q.id === updated.id);
     if (index === -1) return;
 
     this.updateQuestionOptions(index, updated.options);
@@ -120,16 +130,22 @@ export class SurveyDetail implements OnInit, OnDestroy {
   /**
    * Updates specific question options while preserving user interaction state.
    */
-  private updateQuestionOptions(index: number, options: any): void {
-    const newOptions = typeof options === 'string' ? JSON.parse(options) : options;
+  private updateQuestionOptions(index: number, options: unknown): void {
+    if (!this.survey || !this.survey.questions) return;
+
+    const newOptions =
+      typeof options === 'string'
+        ? (JSON.parse(options) as SurveyOption[])
+        : (options as SurveyOption[]);
+
     const current = this.survey.questions[index].options;
-    
-    this.survey.questions[index].options = newOptions.map((opt: any) => {
-      const old = current.find((o: any) => o.letter === opt.letter);
-      return { 
-        ...opt, 
-        selected: old?.selected || false, 
-        locked: old?.locked || false 
+
+    this.survey.questions[index].options = newOptions.map((opt) => {
+      const old = current.find((o) => o.letter === opt.letter);
+      return {
+        ...opt,
+        selected: old?.selected || false,
+        locked: old?.locked || false,
       };
     });
   }
@@ -137,15 +153,26 @@ export class SurveyDetail implements OnInit, OnDestroy {
   /**
    * Manages the voting process with Optimistic UI updates.
    */
-  async onVote(question: any, letter: string, event: Event): Promise<void> {
-    const checked = (event.target as HTMLInputElement).checked;
-    
-    // Deep clone for potential rollback on error
-    const prevState = JSON.parse(JSON.stringify(this.survey.questions));
+  async onVote(
+    question: SurveyQuestion,
+    letter: string,
+    event: Event,
+  ): Promise<void> {
+    if (!this.survey || !this.survey.questions) return;
 
-    // Optimistic Update
-    this.survey.questions = this.surveyLogic.applyVoteUI(this.survey.questions, question, letter, checked);
-    this.surveyLogic.calculatePercentages(this.survey.questions); 
+    const checked = (event.target as HTMLInputElement).checked;
+    const prevState = JSON.parse(
+      JSON.stringify(this.survey.questions),
+    ) as SurveyQuestion[];
+
+    this.survey.questions = this.surveyLogic.applyVoteUI(
+      this.survey.questions,
+      question,
+      letter,
+      checked,
+    );
+
+    this.surveyLogic.calculatePercentages(this.survey.questions);
     this.cdr.detectChanges();
 
     try {
@@ -155,31 +182,42 @@ export class SurveyDetail implements OnInit, OnDestroy {
     }
   }
 
-  /**
+   /**
    * Synchronizes the user's vote with the backend database.
    */
-  private async syncVote(question: any, letter: string, checked: boolean): Promise<void> {
+  private async syncVote(
+    question: SurveyQuestion,
+    letter: string,
+    checked: boolean,
+  ): Promise<void> {
     if (question.allow_multiple) {
       await this.supabase.vote(question.id, letter, checked);
       return;
     }
-    
-    // If single choice, remove previous selection first
-    const previous = question.options.find((opt: any) => opt.selected && opt.letter !== letter);
+
+    const options = question.options;
+    const previous = options.find(
+      (opt) => opt.selected && opt.letter !== letter,
+    );
+
     if (previous) {
       await this.supabase.vote(question.id, previous.letter, false);
     }
+
     await this.supabase.vote(question.id, letter, true);
   }
 
-  /**
+/**
    * Reverts UI state and alerts the user if the voting request fails.
    */
-  private rollbackVote(prevState: any): void {
+  private rollbackVote(prevState: SurveyQuestion[]): void {
+    if (!this.survey) return;
+
     console.error('Voting Sync Failed');
     this.survey.questions = prevState;
     this.surveyLogic.calculatePercentages(this.survey.questions);
     this.cdr.detectChanges();
+
     alert('Something went wrong. Your vote could not be registered.');
   }
 }
