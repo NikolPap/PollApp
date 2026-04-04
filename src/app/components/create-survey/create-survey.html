@@ -24,12 +24,24 @@
           </div>
 
           <div class="split-group">
-            <div class="form-group">
+           
+             <div class="form-group">
               <label>Set end date <span class="optional">(optional)</span></label>
               <div class="input-with-icon">
-                <input type="datetime-local" class="custom-input short-input" [(ngModel)]="surveyEndDate" />
+                <input 
+                  #dateElem 
+                  type="datetime-local" 
+                  class="custom-input short-input" 
+                  [class.invalid]="showValidationErrors() && hasDateError()"
+                  [(ngModel)]="surveyEndDate" 
+                  [min]="minDateTime" />
                 <button class="icon-btn trash-icon" (click)="clearDate()"></button>
               </div>
+              
+          
+              @if (showValidationErrors() && hasDateError()) { 
+                <div class="error-text">Please enter a valid complete future date.</div> 
+              }
             </div>
             
             <div class="form-group">
