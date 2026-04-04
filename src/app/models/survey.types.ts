@@ -35,7 +35,7 @@ export interface SurveyQuestion {
   survey_id: string;
   title: string;
   allow_multiple: boolean;
-  options: SurveyOption[]; // <-- ΑΦΑΙΡΕΘΗΚΕ ΤΟ | string. Τώρα η Angular ξέρει ότι είναι σίγουρα Array!
+  options: SurveyOption[]; 
   hasVoted?: boolean;
 }
 
