@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase';
 import { ModalService } from '../../services/modal.service';
 import { DropdownService } from '../../services/dropdown.service';
-import { Question, Answer, SURVEY_CATEGORIES } from '../../models/survey.types';
+import { Question, Answer, SURVEY_CATEGORIES, FormattedQuestion, Survey } from '../../models/survey.types';
 
 @Component({
   selector: 'app-create-survey',
@@ -21,12 +21,13 @@ export class CreateSurvey {
   categories = SURVEY_CATEGORIES;
 
   @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
+  @ViewChild('dateElem') dateElem!: ElementRef<HTMLInputElement>;
 
   showToast = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
   showValidationErrors = signal<boolean>(false);
 
-  private toastTimeout: any;
+  private toastTimeout: ReturnType<typeof setTimeout> | undefined;
 
   surveyTitle = '';
   surveyDescription = '';
@@ -48,34 +49,66 @@ export class CreateSurvey {
   ]);
 
   /**
+   * Returns the minimum date/time (current moment) in ISO format.
+   */
+  get minDateTime(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  /**
+   * Checks whether the selected date is invalid or in the past.
+   */
+  hasDateError(): boolean {
+    const nativeInput = this.dateElem?.nativeElement;
+    if (nativeInput && !nativeInput.validity.valid) {
+      return true;
+    }
+    if (!this.surveyEndDate) {
+      return false;
+    }
+    const selectedDate = new Date(this.surveyEndDate).getTime();
+    if (isNaN(selectedDate)) return true;
+    
+    const now = new Date().getTime();
+    return selectedDate < now;
+  }
+
+    /**
    * Closes the create survey modal.
    */
   cancel(): void {
     this.modalService.isCreateSurveyOpen.set(false);
   }
 
-  /**
+   /**
    * Clears the survey title input field.
    */
   clearTitle(): void {
     this.surveyTitle = '';
   }
 
-  /**
+   /**
    * Clears the survey end date.
    */
   clearDate(): void {
     this.surveyEndDate = '';
   }
 
-  /**
+/**
    * Clears the survey description field.
    */
   clearDescription(): void {
     this.surveyDescription = '';
   }
 
-  /**
+/**
    * Toggles whether a question allows multiple answers.
    */
   toggleAllowMultiple(questionId: number, newValue: boolean): void {
@@ -110,7 +143,7 @@ export class CreateSurvey {
     this.questions.update((qs) => qs.filter((q) => q.id !== id));
   }
 
-  /**
+   /**
    * Adds a new answer to a specific question (max 6).
    */
   addAnswer(questionId: number): void {
@@ -123,7 +156,7 @@ export class CreateSurvey {
     );
   }
 
-  /**
+ /**
    * Removes an answer from a specific question.
    */
   removeAnswer(questionId: number, answerId: number): void {
@@ -143,21 +176,21 @@ export class CreateSurvey {
     return { id: this.nextAnswerId++, text: '' };
   }
 
-  /**
+ /**
    * Returns A, B, C... based on index.
    */
   getAnswerLetter(index: number): string {
     return String.fromCharCode(65 + index);
   }
 
-  /**
+ /**
    * Counts valid (non-empty) answers in a question.
    */
   getValidAnswersCount(question: Question): number {
     return question.answers.filter((a) => a.text.trim() !== '').length;
   }
 
-  /**
+   /**
    * Closes dropdown when clicking outside.
    */
   @HostListener('document:click', ['$event'])
@@ -169,7 +202,7 @@ export class CreateSurvey {
     if (clickedOutside) this.dropdown.close();
   }
 
-  /**
+ /**
    * Validates and submits the survey.
    */
   async publishSurvey(): Promise<void> {
@@ -186,20 +219,23 @@ export class CreateSurvey {
         validation.questions
       );
       this.showSuccessToast();
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.handleError(error);
     } finally {
       this.isSubmitting.set(false);
     }
   }
 
-  /**
+   /**
    * Validates survey fields and questions.
    */
-  private validateSurvey(): { isValid: boolean; questions: any[] } {
+  private validateSurvey(): { isValid: boolean; questions: FormattedQuestion[] } {
     let hasErrors = false;
 
     if (!this.surveyTitle.trim()) {
+      hasErrors = true;
+    }
+    if (this.hasDateError()) {
       hasErrors = true;
     }
 
@@ -209,11 +245,11 @@ export class CreateSurvey {
     return { isValid: !hasErrors, questions };
   }
 
-  /**
+   /**
    * Formats valid questions for submission.
    */
-  private formatQuestions(): any[] {
-    const formatted: any[] = [];
+  private formatQuestions(): FormattedQuestion[] {
+    const formatted: FormattedQuestion[] = [];
 
     for (const q of this.questions()) {
       const validAnswers = q.answers.filter((a) => a.text.trim() !== '');
@@ -230,11 +266,11 @@ export class CreateSurvey {
     return formatted;
   }
 
-  /**
+ /**
    * Builds payload for API.
    */
-  private buildSurveyData(): any {
-    const payload: any = {
+  private buildSurveyData(): Partial<Survey> {
+    const payload: Partial<Survey> = {
       title: this.surveyTitle,
       description: this.surveyDescription,
       end_date: this.surveyEndDate
@@ -243,7 +279,7 @@ export class CreateSurvey {
     };
 
     if (this.dropdown.selectedItem()) {
-      payload.category = this.dropdown.selectedItem();
+      payload.category = this.dropdown.selectedItem()!;
     }
 
     return payload;
@@ -260,12 +296,13 @@ export class CreateSurvey {
     }, 5000);
   }
 
-  /**
+ /**
    * Handles submission errors.
    */
-  private handleError(error: any): void {
+  private handleError(error: unknown): void {
     console.error('Database Error:', error);
-    alert('Error publishing survey: ' + error.message);
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    alert('Error publishing survey: ' + msg);
   }
 
   /**
