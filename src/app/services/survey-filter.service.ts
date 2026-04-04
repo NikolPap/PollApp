@@ -1,26 +1,26 @@
 import { Injectable } from '@angular/core';
+import { Survey } from '../models/survey.types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SurveyFilterService {
-
   /**
    * Filters a list of surveys to return only those that are currently active.
    * A survey is active if it has no end date or if the end date is in the future.
    * @param data - The array of survey objects.
    * @param now - The current reference date.
    */
-  getActiveSurveys(data: any[], now: Date): any[] {
+  getActiveSurveys(data: Survey[], now: Date): Survey[] {
     return data.filter(s => !s.end_date || new Date(s.end_date) >= now);
   }
 
-  /**
+   /**
    * Filters a list of surveys to return only those that have already expired.
    * @param data - The array of survey objects.
    * @param now - The current reference date.
    */
-  getPastSurveys(data: any[], now: Date): any[] {
+  getPastSurveys(data: Survey[], now: Date): Survey[] {
     return data.filter(s => s.end_date && new Date(s.end_date) < now);
   }
 
@@ -30,13 +30,13 @@ export class SurveyFilterService {
    * @param data - The array of survey objects.
    * @param now - The current reference date.
    */
-  getEndingSoon(data: any[], now: Date): any[] {
+  getEndingSoon(data: Survey[], now: Date): Survey[] {
     const dateLimit = new Date();
     dateLimit.setDate(dateLimit.getDate() + 3);
 
     return this.getActiveSurveys(data, now)
       .filter(s => s.end_date && new Date(s.end_date) <= dateLimit)
-      .sort((a, b) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime());
+      .sort((a, b) => new Date(a.end_date!).getTime() - new Date(b.end_date!).getTime());
   }
 
   /**
